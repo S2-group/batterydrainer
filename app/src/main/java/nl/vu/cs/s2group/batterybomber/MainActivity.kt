@@ -1,7 +1,9 @@
 package nl.vu.cs.s2group.batterybomber
 
+import android.content.Context
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.os.PowerManager
 import android.util.Log
 import android.view.View
 import android.widget.Button
@@ -9,7 +11,7 @@ import android.widget.CheckBox
 import android.widget.Toast
 import androidx.core.content.ContextCompat
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(R.layout.activity_main) {
 
     fun markButtonDisable(button: Button) {
         button.isEnabled = false
@@ -24,16 +26,23 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        return
 
         //activity for Layout Inflation
         //R stands for Resource (res/)
-        setContentView(R.layout.activity_main)
 
+
+        /*
         val startStressButton: Button = findViewById(R.id.start_stress_button)
         val stopStressButton : Button = findViewById(R.id.stop_stress_button)
         val cpuStressCheckBox: CheckBox = findViewById(R.id.cpu_stress_checkbox)
 
         val stressThreads = arrayListOf<Thread>()
+
+        /*TODO: figure out how to acquire a wake lock and release it on stop
+        val powerManager: PowerManager = applicationContext.getSystemService(Context.POWER_SERVICE) as PowerManager
+        powerManager.newWakeLock(PowerManager.WAK_LOCK)
+         */
 
         startStressButton.setOnClickListener {
             val cpuStress: Boolean = cpuStressCheckBox.isChecked
@@ -44,6 +53,7 @@ class MainActivity : AppCompatActivity() {
                 return@setOnClickListener
             }
             markButtonDisable(startStressButton)
+
 
 
             if(cpuStress) {
@@ -74,5 +84,6 @@ class MainActivity : AppCompatActivity() {
             stopStressButton.visibility  = View.INVISIBLE
             markButtonEnable(stopStressButton)
         }
+    */
     }
 }

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/navigation"
+    app:startDestination="@id/stressChoices">
+
+    <fragment
+        android:id="@+id/stressChoices"
+        android:name="nl.vu.cs.s2group.batterybomber.StressChoices"
+        android:label="fragment_stress_choices"
+        tools:layout="@layout/fragment_stress_choices" >
+        <action
+            android:id="@+id/action_stressChoices_to_stressRunning"
+            app:destination="@id/stressRunning" />
+    </fragment>
+    <fragment
+        android:id="@+id/stressRunning"
+        android:name="nl.vu.cs.s2group.batterybomber.StressRunning"
+        android:label="fragment_stress_running"
+        tools:layout="@layout/fragment_stress_running" />
+</navigation>
