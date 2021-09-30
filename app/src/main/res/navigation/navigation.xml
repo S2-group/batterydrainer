@@ -18,5 +18,12 @@
         android:id="@+id/stressRunning"
         android:name="nl.vu.cs.s2group.batterybomber.StressRunning"
         android:label="fragment_stress_running"
-        tools:layout="@layout/fragment_stress_running" />
+        tools:layout="@layout/fragment_stress_running" >
+        <action
+            android:id="@+id/action_stressRunning_to_stressChoices"
+            app:destination="@id/stressChoices" />
+        <argument
+            android:name="cpuStress"
+            app:argType="boolean" />
+    </fragment>
 </navigation>

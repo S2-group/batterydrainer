@@ -25,34 +25,16 @@ class StressChoices : Fragment(R.layout.fragment_stress_choices) {
         val startStressButton: Button = view.findViewById(R.id.start_stress_button)
         val cpuStressCheckBox: CheckBox = view.findViewById(R.id.cpu_stress_checkbox)
 
-        val stressThreads = arrayListOf<Thread>()
-
-        /*TODO: figure out how to acquire a wake lock and release it on stop
-        val powerManager: PowerManager = applicationContext.getSystemService(Context.POWER_SERVICE) as PowerManager
-        powerManager.newWakeLock(PowerManager.WAK_LOCK)
-         */
-
         startStressButton.setOnClickListener {
             val cpuStress: Boolean = cpuStressCheckBox.isChecked
             val hasSelected: Boolean = cpuStress
 
             if(!hasSelected) {
                 //TODO: make a popup that says nothing has been selected
+                Toast.makeText(view.context, "Select at least one component for testing", Toast.LENGTH_LONG).show()
                 return@setOnClickListener
             }
-
-            if(cpuStress) {
-                val cores = Runtime.getRuntime().availableProcessors()
-                Log.d(javaClass.name, "Cores available: $cores. Spawning CPU stresser threads")
-
-                for(i in 1..Runtime.getRuntime().availableProcessors()) {
-                    val stresserCPU = StresserCPU()
-                    stressThreads.add(stresserCPU)
-                    stresserCPU.start()
-                }
-            }
-            Toast.makeText(view.context, "Stress test started!", Toast.LENGTH_LONG).show()
-            view.findNavController().navigate(R.id.action_stressChoices_to_stressRunning)
+            view.findNavController().navigate(StressChoicesDirections.actionStressChoicesToStressRunning(cpuStress))
         }
     }
 }
