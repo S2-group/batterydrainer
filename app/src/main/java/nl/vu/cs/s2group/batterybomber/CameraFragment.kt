@@ -72,5 +72,5 @@ class CameraFragment : Fragment(R.layout.fragment_camera) {
     private fun cameraPermissionsGranted(): Boolean {
         return (ContextCompat.checkSelfPermission(requireActivity().baseContext, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED)
     }
-    
+
 }
