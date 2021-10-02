@@ -3,6 +3,7 @@
     package="nl.vu.cs.s2group.batterybomber">
 
     <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="android.permission.CAMERA" />
 
     <application
         android:allowBackup="true"

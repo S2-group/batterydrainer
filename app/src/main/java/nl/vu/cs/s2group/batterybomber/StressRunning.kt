@@ -6,6 +6,8 @@ import androidx.fragment.app.Fragment
 import android.view.View
 import android.widget.Button
 import android.widget.Toast
+import androidx.fragment.app.add
+import androidx.fragment.app.commit
 import androidx.navigation.findNavController
 
 /**
@@ -14,7 +16,7 @@ import androidx.navigation.findNavController
  * create an instance of this fragment.
  */
 class StressRunning : Fragment(R.layout.fragment_stress_running) {
-    val stressThreads = arrayListOf<Thread>()
+    private val stressThreads = arrayListOf<Thread>()
 
     private fun startStressTest() {
         val args = StressRunningArgs.fromBundle(requireArguments())
@@ -26,6 +28,12 @@ class StressRunning : Fragment(R.layout.fragment_stress_running) {
                 val stresserCPU = StresserCPU()
                 stressThreads.add(stresserCPU)
                 stresserCPU.start()
+            }
+        }
+        if(args.cameraStress) {
+            requireActivity().supportFragmentManager.commit {
+                setReorderingAllowed(true)
+                add<CameraFragment>(R.id.camera_preview_frag_container_view)
             }
         }
     }

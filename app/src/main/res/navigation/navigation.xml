@@ -25,5 +25,8 @@
         <argument
             android:name="cpuStress"
             app:argType="boolean" />
+        <argument
+            android:name="cameraStress"
+            app:argType="boolean" />
     </fragment>
 </navigation>
