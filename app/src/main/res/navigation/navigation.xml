@@ -28,5 +28,8 @@
         <argument
             android:name="cameraStress"
             app:argType="boolean" />
+        <argument
+            android:name="sensorsStress"
+            app:argType="boolean" />
     </fragment>
 </navigation>

@@ -37,6 +37,7 @@ class StresserCPU: Thread() {
             //if case to ensure that code doesn't get optimized out
             if(digest.toHex().endsWith(lucky_suffix)) {
                 //TODO: use toast instead of logcat
+                //Check here https://developer.android.com/guide/background/threading#executing-in-a-background-thread
                 //Toast.makeText(view.context, "Lucky $algorithm hit! Input: $input_str. Output: " + digest.toHex(), Toast.LENGTH_LONG).show()
                 Log.i(javaClass.name, "Lucky $algorithm hit! Input: $input_str. Output: " + digest.toHex())
             }
