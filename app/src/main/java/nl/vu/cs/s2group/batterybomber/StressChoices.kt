@@ -1,12 +1,16 @@
 package nl.vu.cs.s2group.batterybomber
 
 import android.Manifest
+import android.app.Activity
 import android.content.Context
+import android.content.Intent
+import android.content.IntentSender
 import android.content.pm.PackageManager
 import android.hardware.Sensor
 import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
 import android.hardware.SensorManager
+import android.location.LocationManager
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
@@ -18,8 +22,12 @@ import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.result.contract.ActivityResultContracts.RequestPermission
 import androidx.annotation.RequiresApi
+import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.navigation.findNavController
+import com.google.android.gms.common.api.ResolvableApiException
+import com.google.android.gms.location.*
+import com.google.android.gms.tasks.Task
 import kotlinx.android.synthetic.main.fragment_stress_choices.*
 
 /**
@@ -28,14 +36,19 @@ import kotlinx.android.synthetic.main.fragment_stress_choices.*
  * create an instance of this fragment.
  */
 class StressChoices : Fragment(R.layout.fragment_stress_choices) {
+    private lateinit var locationManager: LocationManager
+    protected val REQUEST_CHECK_SETTINGS = 0x1
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        locationManager = requireContext().getSystemService(Context.LOCATION_SERVICE) as LocationManager
 
         val startStressButton: Button = view.findViewById(R.id.start_stress_button)
         val cpuStressCheckBox: CheckBox = view.findViewById(R.id.cpu_stress_checkbox)
         val cameraStressCheckBox: CheckBox = view.findViewById(R.id.camera_stress_checkbox)
         val sensorsStressCheckBox: CheckBox = view.findViewById(R.id.sensors_stress_checkbox)
         val locationStressCheckBox: CheckBox = view.findViewById(R.id.location_stress_checkbox)
+
+        Log.i(javaClass.name, locationManager.getProviders(false).joinToString(prefix="Found Location Providers: "))
 
         val requestCameraPermissionLauncher = registerForActivityResult(RequestPermission()) { isGranted: Boolean ->
             if (isGranted) {
@@ -61,6 +74,7 @@ class StressChoices : Fragment(R.layout.fragment_stress_choices) {
         val requestLocationLauncher = registerForActivityResult(RequestPermission()) { isGranted: Boolean ->
             if (isGranted) {
                 Log.d(this.javaClass.name, "ACCESS_FINE_LOCATION permission is granted")
+                requestHighAccuracyLocation()
             } else {
                 locationStressCheckBox.isChecked = false
                 Toast.makeText(requireContext(), "ACCESS_FINE_LOCATION denied by the user.", Toast.LENGTH_SHORT).show()
@@ -80,8 +94,13 @@ class StressChoices : Fragment(R.layout.fragment_stress_choices) {
             }
         }
         locationStressCheckBox.setOnCheckedChangeListener { _, isChecked ->
-            if(isChecked && !locationPermissionsGranted()) {
-                requestLocationLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
+            if(isChecked) {
+                //Request location permission
+                if(!locationPermissionsGranted()) {
+                    requestLocationLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION) //First requests the location permission and then requests the high accuracy
+                } else {
+                    requestHighAccuracyLocation()
+                }
             }
         }
 
@@ -102,6 +121,59 @@ class StressChoices : Fragment(R.layout.fragment_stress_choices) {
         }
     }
 
+    @Override
+    override fun onResume() {
+        super.onResume()
+
+        //i.e. the user might have navigated to the settings and change the High Precision
+        val locationStressCheckBox: CheckBox = requireView().findViewById(R.id.location_stress_checkbox)
+        if(locationStressCheckBox.isChecked)
+            requestHighAccuracyLocation()
+    }
+
+    @Override
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        //val states : LocationSettingsStates = LocationSettingsStates.fromIntent(data)
+        if(requestCode == REQUEST_CHECK_SETTINGS) {
+            if(resultCode == Activity.RESULT_OK) {
+                Log.i(javaClass.name, "Location mode HIGH_ACCURACY granted")
+            } else if(resultCode == Activity.RESULT_CANCELED) {
+                Toast.makeText(requireContext(), "Location mode HIGH_ACCURACY denied by the user.", Toast.LENGTH_SHORT).show()
+                val locationStressCheckBox: CheckBox = requireView().findViewById(R.id.location_stress_checkbox)
+                locationStressCheckBox.isChecked = false
+            }
+        }
+    }
+
+    /** Request user to change "Location Mode" in settings to "High Accuracy" */
+    private fun requestHighAccuracyLocation() {
+        //Request user to change "Location Mode" in settings to "High Accuracy"
+        val mLocationRequest = LocationRequest.create().apply {
+            interval = 1
+            fastestInterval = 1
+            priority = LocationRequest.PRIORITY_HIGH_ACCURACY
+        }
+
+        val builder = LocationSettingsRequest.Builder()
+            .addLocationRequest(mLocationRequest)
+            .setNeedBle(true)
+        val client: SettingsClient = LocationServices.getSettingsClient(requireContext())
+        val task : Task<LocationSettingsResponse> = client.checkLocationSettings(builder.build())
+        task.addOnSuccessListener {
+            Log.i(javaClass.name, "Location mode HIGH_ACCURACY is enabled")
+            Log.i(javaClass.name, locationManager.getProviders(true).joinToString(prefix="Enabled Location Providers: "))
+        }
+        task.addOnFailureListener { exception ->
+            if (exception is ResolvableApiException){
+                // Location settings are not satisfied, but this can be fixed  by showing the user a dialog.
+                try {
+                    // Show the dialog by calling startResolutionForResult(), and check the result in onActivityResult().
+                    startIntentSenderForResult(exception.status.resolution.intentSender, REQUEST_CHECK_SETTINGS, null, 0, 0, 0, null)
+                } catch (sendEx: IntentSender.SendIntentException) { /* Ignore the error */ }
+            } }
+    }
+
     private fun cameraPermissionsGranted(): Boolean {
         return (ContextCompat.checkSelfPermission(requireActivity().baseContext, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED)
     }
@@ -112,6 +184,9 @@ class StressChoices : Fragment(R.layout.fragment_stress_choices) {
     }
 
     private fun locationPermissionsGranted(): Boolean {
-        return (ContextCompat.checkSelfPermission(requireActivity().baseContext, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED)
+        if(Build.VERSION.SDK_INT < Build.VERSION_CODES.S)
+            return (ContextCompat.checkSelfPermission(requireActivity().baseContext, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED)
+        else
+            TODO("implement me") // On Android 12 (API level 31) or higher we must request both FINE and COARSE grained location
     }
 }
