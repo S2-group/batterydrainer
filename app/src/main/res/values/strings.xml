@@ -7,4 +7,5 @@
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="camera_stress">Camera stress</string>
     <string name="sensors_stress">Sensors stress</string>
+    <string name="location_stress">Location stress</string>
 </resources>

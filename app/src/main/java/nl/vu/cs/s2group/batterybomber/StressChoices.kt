@@ -35,6 +35,7 @@ class StressChoices : Fragment(R.layout.fragment_stress_choices) {
         val cpuStressCheckBox: CheckBox = view.findViewById(R.id.cpu_stress_checkbox)
         val cameraStressCheckBox: CheckBox = view.findViewById(R.id.camera_stress_checkbox)
         val sensorsStressCheckBox: CheckBox = view.findViewById(R.id.sensors_stress_checkbox)
+        val locationStressCheckBox: CheckBox = view.findViewById(R.id.location_stress_checkbox)
 
         val requestCameraPermissionLauncher = registerForActivityResult(RequestPermission()) { isGranted: Boolean ->
             if (isGranted) {
@@ -57,6 +58,15 @@ class StressChoices : Fragment(R.layout.fragment_stress_choices) {
             }
         }
 
+        val requestLocationLauncher = registerForActivityResult(RequestPermission()) { isGranted: Boolean ->
+            if (isGranted) {
+                Log.d(this.javaClass.name, "ACCESS_FINE_LOCATION permission is granted")
+            } else {
+                locationStressCheckBox.isChecked = false
+                Toast.makeText(requireContext(), "ACCESS_FINE_LOCATION denied by the user.", Toast.LENGTH_SHORT).show()
+            }
+        }
+
         cameraStressCheckBox.setOnCheckedChangeListener { buttonView, isChecked ->
             if(isChecked && !cameraPermissionsGranted()) {
                 // Directly ask for permission
@@ -67,6 +77,11 @@ class StressChoices : Fragment(R.layout.fragment_stress_choices) {
         sensorsStressCheckBox.setOnCheckedChangeListener { _, isChecked ->
             if(isChecked && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S && !HSRSensorsPermissionsGranted()) {
                 requestHSRSensorsLauncher.launch(Manifest.permission.HIGH_SAMPLING_RATE_SENSORS)
+            }
+        }
+        locationStressCheckBox.setOnCheckedChangeListener { _, isChecked ->
+            if(isChecked && !locationPermissionsGranted()) {
+                requestLocationLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
             }
         }
 
@@ -93,5 +108,9 @@ class StressChoices : Fragment(R.layout.fragment_stress_choices) {
     @RequiresApi(Build.VERSION_CODES.S)
     private fun HSRSensorsPermissionsGranted(): Boolean {
         return (ContextCompat.checkSelfPermission(requireActivity().baseContext, Manifest.permission.HIGH_SAMPLING_RATE_SENSORS) == PackageManager.PERMISSION_GRANTED)
+    }
+
+    private fun locationPermissionsGranted(): Boolean {
+        return (ContextCompat.checkSelfPermission(requireActivity().baseContext, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED)
     }
 }
