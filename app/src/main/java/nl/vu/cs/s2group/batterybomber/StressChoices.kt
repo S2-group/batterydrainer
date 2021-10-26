@@ -89,15 +89,16 @@ class StressChoices : Fragment(R.layout.fragment_stress_choices) {
             val cpuStress: Boolean = cpuStressCheckBox.isChecked
             val cameraStress: Boolean = cameraStressCheckBox.isChecked
             val sensorsStress: Boolean = sensorsStressCheckBox.isChecked
+            val locationStress : Boolean = locationStressCheckBox.isChecked
             val hasSelected: Boolean = arrayOf(
-                cpuStress, cameraStress, sensorsStress
+                cpuStress, cameraStress, sensorsStress, locationStress
             ).any { it }
 
             if(!hasSelected) {
                 Toast.makeText(view.context, "Select at least one component for testing", Toast.LENGTH_LONG).show()
                 return@setOnClickListener
             }
-            view.findNavController().navigate(StressChoicesDirections.actionStressChoicesToStressRunning(cpuStress, cameraStress, sensorsStress))
+            view.findNavController().navigate(StressChoicesDirections.actionStressChoicesToStressRunning(cpuStress, cameraStress, sensorsStress, locationStress))
         }
     }
 

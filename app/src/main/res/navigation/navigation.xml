@@ -31,5 +31,8 @@
         <argument
             android:name="sensorsStress"
             app:argType="boolean" />
+        <argument
+            android:name="locationStress"
+            app:argType="boolean" />
     </fragment>
 </navigation>
