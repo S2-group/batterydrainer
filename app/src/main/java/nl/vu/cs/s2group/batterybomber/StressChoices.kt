@@ -47,6 +47,7 @@ class StressChoices : Fragment(R.layout.fragment_stress_choices) {
         val cameraStressCheckBox: CheckBox = view.findViewById(R.id.camera_stress_checkbox)
         val sensorsStressCheckBox: CheckBox = view.findViewById(R.id.sensors_stress_checkbox)
         val locationStressCheckBox: CheckBox = view.findViewById(R.id.location_stress_checkbox)
+        val networkStressCheckBox: CheckBox = view.findViewById(R.id.network_stress_checkbox)
 
         Log.i(javaClass.name, locationManager.getProviders(false).joinToString(prefix="Found Location Providers: "))
 
@@ -109,15 +110,16 @@ class StressChoices : Fragment(R.layout.fragment_stress_choices) {
             val cameraStress: Boolean = cameraStressCheckBox.isChecked
             val sensorsStress: Boolean = sensorsStressCheckBox.isChecked
             val locationStress : Boolean = locationStressCheckBox.isChecked
+            val networkStress : Boolean = networkStressCheckBox.isChecked
             val hasSelected: Boolean = arrayOf(
-                cpuStress, cameraStress, sensorsStress, locationStress
+                cpuStress, cameraStress, sensorsStress, locationStress, networkStress
             ).any { it }
 
             if(!hasSelected) {
                 Toast.makeText(view.context, "Select at least one component for testing", Toast.LENGTH_LONG).show()
                 return@setOnClickListener
             }
-            view.findNavController().navigate(StressChoicesDirections.actionStressChoicesToStressRunning(cpuStress, cameraStress, sensorsStress, locationStress))
+            view.findNavController().navigate(StressChoicesDirections.actionStressChoicesToStressRunning(cpuStress, cameraStress, sensorsStress, locationStress, networkStress))
         }
     }
 

@@ -34,5 +34,7 @@
         <argument
             android:name="locationStress"
             app:argType="boolean" />
+        <argument android:name="networkStress"
+            app:argType="boolean" />
     </fragment>
 </navigation>

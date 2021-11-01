@@ -80,6 +80,10 @@ class StressRunning : Fragment(R.layout.fragment_stress_running) {
             locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0.0f, locationListener)
         }
 
+        if(args.networkStress) {
+            //fixme
+        }
+
     }
     private fun stopStressTest() {
         cpuStressThreads.forEach {
