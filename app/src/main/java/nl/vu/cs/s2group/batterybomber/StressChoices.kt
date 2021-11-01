@@ -105,6 +105,11 @@ class StressChoices : Fragment(R.layout.fragment_stress_choices) {
             }
         }
 
+        /* TODO: https://developer.android.com/reference/java/net/HttpURLConnection#handling-network-sign-on
+         * When the user enables network stresser but the WiFI network requires that they go through a
+         * sign-in page first
+         */
+
         startStressButton.setOnClickListener {
             val cpuStress: Boolean = cpuStressCheckBox.isChecked
             val cameraStress: Boolean = cameraStressCheckBox.isChecked
