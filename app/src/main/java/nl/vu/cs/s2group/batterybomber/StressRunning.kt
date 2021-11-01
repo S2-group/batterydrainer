@@ -20,6 +20,15 @@ import androidx.fragment.app.add
 import androidx.fragment.app.commit
 import androidx.navigation.findNavController
 import androidx.core.app.ActivityCompat
+import java.io.BufferedInputStream
+import java.io.InputStream
+import java.io.InterruptedIOException
+import java.net.HttpURLConnection
+import java.net.URL
+import java.util.concurrent.Executor
+import java.util.concurrent.Executors
+import java.util.concurrent.TimeUnit
+import javax.net.ssl.HttpsURLConnection
 
 
 /**
@@ -35,6 +44,7 @@ class StressRunning : Fragment(R.layout.fragment_stress_running) {
     private var stressedSensors : List<Sensor>? = null
     private val sensorsListener = SensorsListener()
     private val locationListener = LocationListener()
+    private val networkExecutorService = Executors.newSingleThreadExecutor()
 
     private fun startStressTest() {
         val args = StressRunningArgs.fromBundle(requireArguments())
@@ -81,7 +91,11 @@ class StressRunning : Fragment(R.layout.fragment_stress_running) {
         }
 
         if(args.networkStress) {
-            //fixme
+            /* https://developer.android.com/training/efficient-downloads
+             *   - Data transfers over broadband consume more battery than WiFi
+             *   - It's also more efficient to keep the radio active for longer periods during each transfer session to reduce the frequency of updates.
+            */
+            networkExecutorService.execute(NetworkStresser())
         }
 
     }
@@ -92,6 +106,11 @@ class StressRunning : Fragment(R.layout.fragment_stress_running) {
         cpuStressThreads.clear()
         sensorManager.unregisterListener(sensorsListener)
         locationManager.removeUpdates(locationListener)
+
+        networkExecutorService.shutdownNow()
+        while(!networkExecutorService.awaitTermination(5, TimeUnit.SECONDS)) {
+            /* Wait for termination */
+        }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -145,4 +164,45 @@ private class LocationListener() : LocationListener {
     override fun onProviderDisabled(provider: String) {}
 
     override fun onStatusChanged(provider: String?, status: Int, extras: Bundle?) {}
+}
+
+private class NetworkStresser : Runnable {
+    //FIXME: add a proper server here
+    //FIXME: make me HTTPS
+    private val SERVER_URL = URL("http://192.168.122.1:8123")
+
+    override fun run() {
+        while(!Thread.interrupted()) {
+            val con: HttpURLConnection = SERVER_URL.openConnection() as HttpURLConnection //FIXME: make me HttpsURLConnection
+            con.requestMethod = "GET"
+            con.setRequestProperty("cache-control", "no-cache,must-revalidate");
+
+            try {
+                val status = con.responseCode //execute the request
+                val inputStream = BufferedInputStream(con.inputStream)
+                Log.d(javaClass.name, "Status: $status")
+
+                if(status != 200) {
+                    Log.e(javaClass.name, "Unexpected status code in network request. Stopping.", )
+                    break
+                }
+                val dataChunk = ByteArray(32 * 1024 * 1024) //32 MB buffer
+                while(inputStream.read(dataChunk) != -1) { //read the response
+                    /* This if condition is impossible to occur but we keep it to prevent the JVM from
+                     * optimizing out the entire loop
+                     */
+                    if (dataChunk[0].toInt() == 300)
+                        Log.d(javaClass.name, "Impossible")
+                    //Log.d(javaClass.name, "Status: $status, Data Chunk[0]: ${dataChunk[0].toInt().toChar()}")
+                }
+
+                inputStream.close()
+            } catch(ex: InterruptedIOException) {
+                break
+            } finally {
+                con.disconnect()
+            }
+        }
+        Log.i(javaClass.name, "Network thread stopped")
+    }
 }
