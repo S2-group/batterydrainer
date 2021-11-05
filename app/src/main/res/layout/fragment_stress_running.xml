@@ -28,12 +28,16 @@
         app:layout_constraintTop_toTopOf="parent"
         tools:layout="@layout/fragment_camera" />
 
+    <!-- Initially invisible because as soon as this custom view gets visible, the GPU will
+    start drawing millions of small rotating triangles
+    -->
     <nl.vu.cs.s2group.batterybomber.graphics.MyGLSurfaceView
         android:id="@+id/myGLSurfaceView"
         android:layout_width="154dp"
         android:layout_height="275dp"
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
+        android:visibility="invisible"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 

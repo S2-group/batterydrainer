@@ -36,5 +36,8 @@
             app:argType="boolean" />
         <argument android:name="networkStress"
             app:argType="boolean" />
+        <argument
+            android:name="gpuStress"
+            app:argType="boolean" />
     </fragment>
 </navigation>

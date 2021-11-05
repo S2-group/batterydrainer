@@ -9,4 +9,5 @@
     <string name="sensors_stress">Sensors stress</string>
     <string name="location_stress">Location stress</string>
     <string name="network_stress">Network stress</string>
+    <string name="gpu_stress">GPU stress</string>
 </resources>

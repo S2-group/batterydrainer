@@ -20,6 +20,8 @@ import androidx.fragment.app.add
 import androidx.fragment.app.commit
 import androidx.navigation.findNavController
 import androidx.core.app.ActivityCompat
+import androidx.core.view.isVisible
+import nl.vu.cs.s2group.batterybomber.graphics.MyGLSurfaceView
 import java.io.BufferedInputStream
 import java.io.InputStream
 import java.io.InterruptedIOException
@@ -96,6 +98,11 @@ class StressRunning : Fragment(R.layout.fragment_stress_running) {
              *   - It's also more efficient to keep the radio active for longer periods during each transfer session to reduce the frequency of updates.
             */
             networkExecutorService.execute(NetworkStresser())
+        }
+
+        if(args.gpuStress) {
+            val gpuCanvas: MyGLSurfaceView = requireView().findViewById(R.id.myGLSurfaceView)
+            gpuCanvas.isVisible = true
         }
 
     }

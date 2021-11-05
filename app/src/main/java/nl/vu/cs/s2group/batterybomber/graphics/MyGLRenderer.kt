@@ -8,6 +8,7 @@ import android.opengl.GLES20
 import android.opengl.GLSurfaceView
 import android.opengl.Matrix
 import android.os.SystemClock
+import android.util.Log
 
 class MyGLRenderer : GLSurfaceView.Renderer {
     private lateinit var mTriangle: Triangle
@@ -33,6 +34,8 @@ class MyGLRenderer : GLSurfaceView.Renderer {
     }
 
     override fun onDrawFrame(unused: GL10) {
+        // Log.d(javaClass.name, "Rendering!")
+
         val scratch = FloatArray(16)
 
         GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT) // Redraw background color
