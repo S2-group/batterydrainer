@@ -28,4 +28,13 @@
         app:layout_constraintTop_toTopOf="parent"
         tools:layout="@layout/fragment_camera" />
 
+    <nl.vu.cs.s2group.batterybomber.graphics.MyGLSurfaceView
+        android:id="@+id/myGLSurfaceView"
+        android:layout_width="154dp"
+        android:layout_height="275dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>
