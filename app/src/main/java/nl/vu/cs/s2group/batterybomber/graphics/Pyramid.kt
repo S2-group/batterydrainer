@@ -39,37 +39,52 @@ class Pyramid {
         0.5f, -0.5f, -0.5f, //top
     )
 
-    private val vertexColors = floatArrayOf(
-        //R
-        1.0f, 0.0f, 0.0f, 1.0f,
-        1.0f, 0.0f, 0.0f, 1.0f,
-        1.0f, 0.0f, 0.0f, 1.0f,
+//    private val vertexColors = floatArrayOf(
+//        //R
+//        1.0f, 0.0f, 0.0f, 1.0f,
+//        1.0f, 0.0f, 0.0f, 1.0f,
+//        1.0f, 0.0f, 0.0f, 1.0f,
+//
+//        //G
+//        0.0f, 1.0f, 0.0f, 1.0f,
+//        0.0f, 1.0f, 0.0f, 1.0f,
+//        0.0f, 1.0f, 0.0f, 1.0f,
+//
+//        //B
+//        0.0f, 0.0f, 1.0f, 1.0f,
+//        0.0f, 0.0f, 1.0f, 1.0f,
+//        0.0f, 0.0f, 1.0f, 1.0f,
+//
+//        //yellow
+//        0.91f, 0.91f, 0.20f, 1.0f,
+//        0.91f, 0.91f, 0.20f, 1.0f,
+//        0.91f, 0.91f, 0.20f, 1.0f,
+//
+//        //cyan
+//        0.20f, 0.91f, 0.91f, 1.0f,
+//        0.20f, 0.91f, 0.91f, 1.0f,
+//        0.20f, 0.91f, 0.91f, 1.0f,
+//
+//        //magenta
+//        0.91f, 0.20f, 0.91f, 1.0f,
+//        0.91f, 0.20f, 0.91f, 1.0f,
+//        0.91f, 0.20f, 0.91f, 1.0f,
+//    )
+//    private val drawingMode = GLES20.GL_TRIANGLES
 
-        //G
-        0.0f, 1.0f, 0.0f, 1.0f,
-        0.0f, 1.0f, 0.0f, 1.0f,
-        0.0f, 1.0f, 0.0f, 1.0f,
-
-        //B
-        0.0f, 0.0f, 1.0f, 1.0f,
-        0.0f, 0.0f, 1.0f, 1.0f,
-        0.0f, 0.0f, 1.0f, 1.0f,
-
-        //yellow
-        0.91f, 0.91f, 0.20f, 1.0f,
-        0.91f, 0.91f, 0.20f, 1.0f,
-        0.91f, 0.91f, 0.20f, 1.0f,
-
-        //cyan
-        0.20f, 0.91f, 0.91f, 1.0f,
-        0.20f, 0.91f, 0.91f, 1.0f,
-        0.20f, 0.91f, 0.91f, 1.0f,
-
-        //magenta
-        0.91f, 0.20f, 0.91f, 1.0f,
-        0.91f, 0.20f, 0.91f, 1.0f,
-        0.91f, 0.20f, 0.91f, 1.0f,
-    )
+    //monochrome
+    private val vertexColors: FloatArray
+    init {
+        val list = arrayListOf<Float>()
+        for(i in 0 until pyramidCoords.size / COORDS_PER_VERTEX) {
+            list.add(0.56f)
+            list.add(0.56f)
+            list.add(0.56f)
+            list.add(1.0f)
+        }
+        vertexColors = list.toFloatArray()
+    }
+    private val drawingMode = GLES20.GL_TRIANGLE_STRIP
 
     private val vertexShaderCode =
         """
@@ -167,9 +182,9 @@ class Pyramid {
         GLES20.glVertexAttribPointer(mColorHandle, 4, GLES20.GL_FLOAT, false, 0, colorBuffer);
 
         vPMatrixHandle = GLES20.glGetUniformLocation(mProgram, "uMVPMatrix") // get handle to shape's transformation matrix
-        GLES20.glUniformMatrix4fv(vPMatrixHandle, 1, false, mvpMatrix, 0) // Pass the projection and view transformation to the shader
+        GLES20.glUniformMatrix4fv(vPMatrixHandle, 1, false, mvpMatrix, 0) //Pass the MVP data into the shader
 
-        GLES20.glDrawArrays(GLES20.GL_TRIANGLES, 0, vertexCount) // Draw the pyramid
+        GLES20.glDrawArrays(drawingMode, 0, vertexCount) // Draw the pyramid.
         GLES20.glDisableVertexAttribArray(positionHandle) // Disable vertex array
     }
 

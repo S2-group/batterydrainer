@@ -55,31 +55,36 @@ class MyGLRenderer : GLSurfaceView.Renderer {
 
         GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT); // Draw background color
 
-        //Draw triangle
         // Set the camera position (View matrix). eye = camera position. center = target position
         Matrix.setLookAtM(viewMatrix, 0, 0f, 0f, -3f, 0f, 0f, 0f, 0f, 1.0f, 0.0f)
-        // Calculate the projection and view transformation
-        Matrix.multiplyMM(vPMatrix, 0, projectionMatrix, 0, viewMatrix, 0);
 
-        // Draw triangle
-        mTriangle.draw(vPMatrix);
-
-        // Now moving on to the pyramid. Draw the pyramid
-        Matrix.setIdentityM(mModelMatrix, 0);
-        Matrix.scaleM(mModelMatrix, 0, 0.75f, 0.75f, 0.75f) //make it smaller
-        // Matrix.translateM(mModelMatrix, 0, 0.0f, -0.25f, 0.0f)
-        // Matrix.rotateM(mModelMatrix, 0, 0.0f, 1.0f, 0.0f, 0.0f)
-
+        // Draw a gazillion of tiny rotating pyramids
         val time = SystemClock.uptimeMillis() % 4000L
         val angle = 0.090f * time.toInt()
-        Matrix.rotateM(mModelMatrix, 0, angle, 0.0f, 1.0f, 0.0f)
+        val dx = 1.2f
+        val dy = 1.3f
+        for(i in 0 until 76) {
+            for (j in 0 until 45) {
+                Matrix.setIdentityM(mModelMatrix, 0);
+                Matrix.scaleM(mModelMatrix, 0, 0.02f, 0.02f, 0.02f) //make it smaller
+                Matrix.translateM(mModelMatrix, 0, 26.5f, 48.5f, 0.0f)  //move to top-left corner
 
-        // Combine the model matrix with the projection and camera view
-        mTempMatrix = vPMatrix.clone();
-        Matrix.multiplyMM(vPMatrix, 0, mTempMatrix, 0, mModelMatrix, 0);
+                Matrix.translateM(mModelMatrix, 0, -j * dx, -i*dy, 0.0f)
 
-        // Draw pyramid
-        mPyramid.draw(vPMatrix); //HINT! I can reuse mPyramid everywhere!
+                Matrix.rotateM(mModelMatrix, 0, angle + j * 10, 0.0f, 1.0f, 0.0f)
+                Matrix.rotateM(mModelMatrix, 0, angle + j * 10, 1.0f, 0.0f, 0.0f)
+
+                // combine the model with the view matrix
+                Matrix.multiplyMM(vPMatrix, 0, viewMatrix, 0, mModelMatrix, 0);
+
+                // combine the model-view with the projection matrix
+                mTempMatrix = vPMatrix.clone();
+                Matrix.multiplyMM(vPMatrix, 0, projectionMatrix, 0, mTempMatrix, 0);
+
+                // Draw pyramid
+                mPyramid.draw(vPMatrix); //HINT! I can reuse mPyramid everywhere!
+            }
+        }
     }
 
     override fun onSurfaceChanged(unused: GL10, width: Int, height: Int) {
