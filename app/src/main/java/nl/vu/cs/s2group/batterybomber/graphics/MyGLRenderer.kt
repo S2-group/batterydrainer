@@ -42,30 +42,44 @@ class MyGLRenderer : GLSurfaceView.Renderer {
         mSquare = Square()
     }
 
+    // create a model matrix for the triangle
+    private val mModelMatrix = FloatArray(16)
+
+    // create a temporary matrix for calculation purposes,
+    // to avoid the same matrix on the right and left side of multiplyMM later
+    // see https://stackoverflow.com/questions/13480043/opengl-es-android-matrix-transformations#comment18443759_13480364
+    private var mTempMatrix = FloatArray(16)
+
     override fun onDrawFrame(unused: GL10) {
         // Log.d(javaClass.name, "Rendering!")
 
-        val scratch = FloatArray(16)
+        GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT); // Draw background color
 
-        GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT) // Redraw background color
-
-        // Set the camera position (View matrix)
+        //Draw triangle
+        // Set the camera position (View matrix). eye = camera position. center = target position
         Matrix.setLookAtM(viewMatrix, 0, 0f, 0f, -3f, 0f, 0f, 0f, 0f, 1.0f, 0.0f)
-
         // Calculate the projection and view transformation
-        Matrix.multiplyMM(vPMatrix, 0, projectionMatrix, 0, viewMatrix, 0)
+        Matrix.multiplyMM(vPMatrix, 0, projectionMatrix, 0, viewMatrix, 0);
 
-        // Create a rotation transformation for the triangle
+        // Draw triangle
+        mTriangle.draw(vPMatrix);
+
+        // Now moving on to the pyramid. Draw the pyramid
+        Matrix.setIdentityM(mModelMatrix, 0);
+        Matrix.scaleM(mModelMatrix, 0, 0.75f, 0.75f, 0.75f) //make it smaller
+        // Matrix.translateM(mModelMatrix, 0, 0.0f, -0.25f, 0.0f)
+        // Matrix.rotateM(mModelMatrix, 0, 0.0f, 1.0f, 0.0f, 0.0f)
+
         val time = SystemClock.uptimeMillis() % 4000L
         val angle = 0.090f * time.toInt()
-        Matrix.setRotateM(rotationMatrix, 0, angle, 0f, 0f, -1.0f)
+        Matrix.rotateM(mModelMatrix, 0, angle, 0.0f, 1.0f, 0.0f)
 
-        // Combine the rotation matrix with the projection and camera view.
-        // Note that the vPMatrix factor *must be first* in order for the matrix multiplication product to be correct.
-        Matrix.multiplyMM(scratch, 0, vPMatrix, 0, rotationMatrix, 0)
+        // Combine the model matrix with the projection and camera view
+        mTempMatrix = vPMatrix.clone();
+        Matrix.multiplyMM(vPMatrix, 0, mTempMatrix, 0, mModelMatrix, 0);
 
-        mTriangle.draw(scratch) // Draw shape
-
+        // Draw pyramid
+        mPyramid.draw(vPMatrix); //HINT! I can reuse mPyramid everywhere!
     }
 
     override fun onSurfaceChanged(unused: GL10, width: Int, height: Int) {
