@@ -71,8 +71,8 @@ class MyGLRenderer : GLSurfaceView.Renderer {
 
                 Matrix.translateM(mModelMatrix, 0, -j * dx, -i*dy, 0.0f)
 
-                Matrix.rotateM(mModelMatrix, 0, angle + j * 10, 0.0f, 1.0f, 0.0f)
-                Matrix.rotateM(mModelMatrix, 0, angle + j * 10, 1.0f, 0.0f, 0.0f)
+                Matrix.rotateM(mModelMatrix, 0, angle + (i+j)*5, 0.0f, 1.0f, 0.0f)
+                Matrix.rotateM(mModelMatrix, 0, angle + (i+j)*5, 1.0f, 0.0f, 0.0f)
 
                 // combine the model with the view matrix
                 Matrix.multiplyMM(vPMatrix, 0, viewMatrix, 0, mModelMatrix, 0);
