@@ -6,8 +6,6 @@ import java.nio.ByteBuffer
 import java.nio.ByteOrder
 import java.nio.FloatBuffer
 
-
-
 class Triangle(
     top: Triple<Float,Float,Float>,
     bl: Triple<Float,Float,Float>,
@@ -83,7 +81,7 @@ class Triangle(
             }
         }
 
-    private var mProgram: Int
+    private val mProgram: Int
 
     init {
         val vertexShader: Int = MyGLRenderer.loadShader(GLES20.GL_VERTEX_SHADER, vertexShaderCode)
