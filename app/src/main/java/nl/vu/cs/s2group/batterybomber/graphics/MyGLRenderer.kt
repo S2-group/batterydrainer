@@ -12,6 +12,7 @@ import android.util.Log
 
 class MyGLRenderer : GLSurfaceView.Renderer {
     private lateinit var mTriangle: Triangle
+    private lateinit var mPyramid: Pyramid
     private lateinit var mSquare: Square
 
     // vPMatrix is an abbreviation for "Model View Projection Matrix"
@@ -29,7 +30,15 @@ class MyGLRenderer : GLSurfaceView.Renderer {
 
         // Unless the structure (the original coordinates) of the shapes you use in your program change during the course of execution,
         // you should initialize them in the onSurfaceCreated() method of your renderer for memory and processing efficiency.
-        mTriangle = Triangle()
+        mTriangle = Triangle(
+            Triple(0.0f, 0.622008459f, 0.0f),      // top
+            Triple(-0.5f, -0.311004243f, 0.0f),    // bottom left
+            Triple(0.5f, -0.311004243f, 0.0f),      // bottom right
+            Color(1.0f, 0.0f, 0.0f),    //Color(0.63671875f, 0.76953125f, 0.22265625f)
+            Color(0.0f, 1.0f, 0.0f),
+            Color(0.0f, 0.0f, 1.0f),
+        )
+        mPyramid = Pyramid()
         mSquare = Square()
     }
 
