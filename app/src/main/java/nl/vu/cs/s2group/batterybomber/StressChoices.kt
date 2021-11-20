@@ -18,6 +18,7 @@ import androidx.fragment.app.Fragment
 import android.view.View
 import android.widget.Button
 import android.widget.CheckBox
+import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.result.contract.ActivityResultContracts.RequestPermission
@@ -29,6 +30,8 @@ import com.google.android.gms.common.api.ResolvableApiException
 import com.google.android.gms.location.*
 import com.google.android.gms.tasks.Task
 import kotlinx.android.synthetic.main.fragment_stress_choices.*
+import java.lang.StringBuilder
+import java.util.*
 
 /**
  * A simple [Fragment] subclass.
@@ -38,6 +41,12 @@ import kotlinx.android.synthetic.main.fragment_stress_choices.*
 class StressChoices : Fragment(R.layout.fragment_stress_choices) {
     private lateinit var locationManager: LocationManager
     protected val REQUEST_CHECK_SETTINGS = 0x1
+
+    private fun updateOnSelection(selectedComponentsTextView : TextView, stressNames: Map<CheckBox, String>) {
+        val sj = StringJoiner(", ", getString(R.string.selected_components) + ": ", "")
+        stressNames.filter { it.key.isChecked }.values.forEach { sj.add(it) }
+        selectedComponentsTextView.text = sj.toString()
+    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         locationManager = requireContext().getSystemService(Context.LOCATION_SERVICE) as LocationManager
@@ -49,6 +58,16 @@ class StressChoices : Fragment(R.layout.fragment_stress_choices) {
         val locationStressCheckBox: CheckBox = view.findViewById(R.id.location_stress_checkbox)
         val networkStressCheckBox: CheckBox = view.findViewById(R.id.network_stress_checkbox)
         val gpuStressCheckBox: CheckBox = view.findViewById(R.id.gpu_stress_checkbox)
+        val selectedComponentsTextView : TextView = view.findViewById(R.id.selectedComponentsTextView)
+
+        val stressNames: Map<CheckBox, String> = mapOf(
+            cpuStressCheckBox to "CPU",
+            gpuStressCheckBox to "GPU",
+            cameraStressCheckBox to "Camera",
+            sensorsStressCheckBox to "Sensors",
+            networkStressCheckBox to "Network",
+            locationStressCheckBox to "Location",
+        )
 
         Log.i(javaClass.name, locationManager.getProviders(false).joinToString(prefix="Found Location Providers: "))
 
@@ -61,8 +80,9 @@ class StressChoices : Fragment(R.layout.fragment_stress_choices) {
                 // features requires a permission that the user has denied. At the
                 // same time, respect the user's decision.
                 cameraStressCheckBox.isChecked = false
-                Toast.makeText(requireContext(), "CAMERA Permissions denied by the user.", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), "CAMERA denied by the user.", Toast.LENGTH_SHORT).show()
             }
+            updateOnSelection(selectedComponentsTextView, stressNames)
         }
         val requestHSRSensorsLauncher = registerForActivityResult(RequestPermission()) { isGranted: Boolean ->
             if (isGranted) {
@@ -71,6 +91,7 @@ class StressChoices : Fragment(R.layout.fragment_stress_choices) {
                 sensors_stress_checkbox.isChecked = false
                 Toast.makeText(requireContext(), "HIGH_SAMPLING_RATE_SENSORS denied by the user.", Toast.LENGTH_SHORT).show()
             }
+            updateOnSelection(selectedComponentsTextView, stressNames)
         }
 
         val requestLocationLauncher = registerForActivityResult(RequestPermission()) { isGranted: Boolean ->
@@ -81,9 +102,11 @@ class StressChoices : Fragment(R.layout.fragment_stress_choices) {
                 locationStressCheckBox.isChecked = false
                 Toast.makeText(requireContext(), "ACCESS_FINE_LOCATION denied by the user.", Toast.LENGTH_SHORT).show()
             }
+            updateOnSelection(selectedComponentsTextView, stressNames)
         }
 
         cameraStressCheckBox.setOnCheckedChangeListener { buttonView, isChecked ->
+            updateOnSelection(selectedComponentsTextView, stressNames)
             if(isChecked && !cameraPermissionsGranted()) {
                 // Directly ask for permission
                 // The registered ActivityResultCallback gets the result of this request.
@@ -91,11 +114,13 @@ class StressChoices : Fragment(R.layout.fragment_stress_choices) {
             }
         }
         sensorsStressCheckBox.setOnCheckedChangeListener { _, isChecked ->
+            updateOnSelection(selectedComponentsTextView, stressNames)
             if(isChecked && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S && !HSRSensorsPermissionsGranted()) {
                 requestHSRSensorsLauncher.launch(Manifest.permission.HIGH_SAMPLING_RATE_SENSORS)
             }
         }
         locationStressCheckBox.setOnCheckedChangeListener { _, isChecked ->
+            updateOnSelection(selectedComponentsTextView, stressNames)
             if(isChecked) {
                 //Request location permission
                 if(!locationPermissionsGranted()) {
@@ -104,6 +129,10 @@ class StressChoices : Fragment(R.layout.fragment_stress_choices) {
                     requestHighAccuracyLocation()
                 }
             }
+        }
+
+        listOf(cpuStressCheckBox, gpuStressCheckBox, networkStressCheckBox).forEach{
+            it.setOnCheckedChangeListener { _, _ ->  updateOnSelection(selectedComponentsTextView, stressNames) }
         }
 
         /* TODO: https://developer.android.com/reference/java/net/HttpURLConnection#handling-network-sign-on
