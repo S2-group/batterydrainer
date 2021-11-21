@@ -174,13 +174,14 @@ private class LocationListener() : LocationListener {
 }
 
 private class NetworkStresser : Runnable {
-    //FIXME: add a proper server here
-    //FIXME: make me HTTPS
-    private val SERVER_URL = URL("http://192.168.122.1:8123")
+    private val SERVER_URL = URL("https://garbage-traffic.netlify.app/garbage.blob")
+    //private val SERVER_URL = URL("http://192.168.0.107:8080/garbage.blob")
 
     override fun run() {
         while(!Thread.interrupted()) {
-            val con: HttpURLConnection = SERVER_URL.openConnection() as HttpURLConnection //FIXME: make me HttpsURLConnection
+            val con: HttpsURLConnection = SERVER_URL.openConnection() as HttpsURLConnection
+            //val con: HttpURLConnection = SERVER_URL.openConnection() as HttpURLConnection
+
             con.requestMethod = "GET"
             con.setRequestProperty("cache-control", "no-cache,must-revalidate");
 
