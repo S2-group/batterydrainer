@@ -184,6 +184,7 @@ private class NetworkStresser : Runnable {
 
             con.requestMethod = "GET"
             con.setRequestProperty("cache-control", "no-cache,must-revalidate");
+            con.setRequestProperty("accept-encoding", "identity"); //prevent compression on server-side
 
             try {
                 val status = con.responseCode //execute the request
