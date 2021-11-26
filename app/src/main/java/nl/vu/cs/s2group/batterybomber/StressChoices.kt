@@ -13,7 +13,6 @@ import android.hardware.SensorManager
 import android.location.LocationManager
 import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.View
 import android.widget.Button
@@ -30,6 +29,7 @@ import com.google.android.gms.common.api.ResolvableApiException
 import com.google.android.gms.location.*
 import com.google.android.gms.tasks.Task
 import kotlinx.android.synthetic.main.fragment_stress_choices.*
+import timber.log.Timber
 import java.lang.StringBuilder
 import java.util.*
 
@@ -69,12 +69,12 @@ class StressChoices : Fragment(R.layout.fragment_stress_choices) {
             locationStressCheckBox to "Location",
         )
 
-        Log.i(javaClass.name, locationManager.getProviders(false).joinToString(prefix="Found Location Providers: "))
+        Timber.i(locationManager.getProviders(false).joinToString(prefix="Found Location Providers: "))
 
         val requestCameraPermissionLauncher = registerForActivityResult(RequestPermission()) { isGranted: Boolean ->
             if (isGranted) {
                 // Permission is granted. Continue the action or workflow in your app.
-                Log.d(this.javaClass.name, "CAMERA permission is granted")
+                Timber.d("CAMERA permission is granted")
             } else {
                 // Explain to the user that the feature is unavailable because the
                 // features requires a permission that the user has denied. At the
@@ -86,7 +86,7 @@ class StressChoices : Fragment(R.layout.fragment_stress_choices) {
         }
         val requestHSRSensorsLauncher = registerForActivityResult(RequestPermission()) { isGranted: Boolean ->
             if (isGranted) {
-                Log.d(this.javaClass.name, "HIGH_SAMPLING_RATE_SENSORS permission is granted")
+                Timber.d("HIGH_SAMPLING_RATE_SENSORS permission is granted")
             } else {
                 sensors_stress_checkbox.isChecked = false
                 Toast.makeText(requireContext(), "HIGH_SAMPLING_RATE_SENSORS denied by the user.", Toast.LENGTH_SHORT).show()
@@ -96,7 +96,7 @@ class StressChoices : Fragment(R.layout.fragment_stress_choices) {
 
         val requestLocationLauncher = registerForActivityResult(RequestPermission()) { isGranted: Boolean ->
             if (isGranted) {
-                Log.d(this.javaClass.name, "ACCESS_FINE_LOCATION permission is granted")
+                Timber.d("ACCESS_FINE_LOCATION permission is granted")
                 requestHighAccuracyLocation()
             } else {
                 locationStressCheckBox.isChecked = false
@@ -175,7 +175,7 @@ class StressChoices : Fragment(R.layout.fragment_stress_choices) {
         //val states : LocationSettingsStates = LocationSettingsStates.fromIntent(data)
         if(requestCode == REQUEST_CHECK_SETTINGS) {
             if(resultCode == Activity.RESULT_OK) {
-                Log.i(javaClass.name, "Location mode HIGH_ACCURACY granted")
+                Timber.i("Location mode HIGH_ACCURACY granted")
             } else if(resultCode == Activity.RESULT_CANCELED) {
                 Toast.makeText(requireContext(), "Location mode HIGH_ACCURACY denied by the user.", Toast.LENGTH_SHORT).show()
                 val locationStressCheckBox: CheckBox = requireView().findViewById(R.id.location_stress_checkbox)
@@ -199,8 +199,8 @@ class StressChoices : Fragment(R.layout.fragment_stress_choices) {
         val client: SettingsClient = LocationServices.getSettingsClient(requireContext())
         val task : Task<LocationSettingsResponse> = client.checkLocationSettings(builder.build())
         task.addOnSuccessListener {
-            Log.i(javaClass.name, "Location mode HIGH_ACCURACY is enabled")
-            Log.i(javaClass.name, locationManager.getProviders(true).joinToString(prefix="Enabled Location Providers: "))
+            Timber.i("Location mode HIGH_ACCURACY is enabled")
+            Timber.i(locationManager.getProviders(true).joinToString(prefix="Enabled Location Providers: "))
         }
         task.addOnFailureListener { exception ->
             if (exception is ResolvableApiException){

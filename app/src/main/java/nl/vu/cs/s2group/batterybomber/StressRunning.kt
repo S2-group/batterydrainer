@@ -11,7 +11,6 @@ import android.location.Location
 import android.location.LocationListener
 import android.location.LocationManager
 import android.os.Bundle
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.View
 import android.widget.Button
@@ -22,6 +21,7 @@ import androidx.navigation.findNavController
 import androidx.core.app.ActivityCompat
 import androidx.core.view.isVisible
 import nl.vu.cs.s2group.batterybomber.graphics.MyGLSurfaceView
+import timber.log.Timber
 import java.io.BufferedInputStream
 import java.io.InputStream
 import java.io.InterruptedIOException
@@ -52,7 +52,7 @@ class StressRunning : Fragment(R.layout.fragment_stress_running) {
         val args = StressRunningArgs.fromBundle(requireArguments())
         if(args.cpuStress) {
             val cores = Runtime.getRuntime().availableProcessors()
-            Log.d(javaClass.name, "Cores available: $cores. Spawning CPU stresser threads")
+            Timber.d("Cores available: $cores. Spawning CPU stresser threads")
 
             (1..cores).forEach{ _ ->
                 val stresserCPU = StresserCPU()
@@ -70,7 +70,7 @@ class StressRunning : Fragment(R.layout.fragment_stress_running) {
         if(args.sensorsStress) {
             stressedSensors = sensorManager.getSensorList(Sensor.TYPE_ALL)
             stressedSensors!!.forEach { sensor ->
-                Log.d(javaClass.name, "Stressing sensor: ${sensor.name}")
+                Timber.d("Stressing sensor: ${sensor.name}")
                 sensorManager.registerListener(sensorsListener, sensor, SensorManager.SENSOR_DELAY_FASTEST)
             }
         }
@@ -147,24 +147,24 @@ private class SensorsListener() : SensorEventListener {
 
     override fun onSensorChanged(event: SensorEvent) {
         if(event.values[0].toDouble() == MyConstants.PI_50) {
-            Log.d(javaClass.name, "${event.sensor.name} congrats! You found the first 50 digits of PI: ${event.values[0]}")
+            Timber.d("${event.sensor.name} congrats! You found the first 50 digits of PI: ${event.values[0]}")
             //TODO: make this a toast instead
         }
-        //Log.d(javaClass.name, "onSensorChanged: ${event.sensor.name} ${event.values[0]}")
+        //Timber.d("onSensorChanged: ${event.sensor.name} ${event.values[0]}")
     }
 
     override fun onAccuracyChanged(sensor: Sensor, accuracy: Int) {
-        Log.d(javaClass.name, "onAccuracyChanged: ${sensor.name}. New accuracy: $accuracy")
+        Timber.d("onAccuracyChanged: ${sensor.name}. New accuracy: $accuracy")
     }
 }
 
 private class LocationListener() : LocationListener {
     override fun onLocationChanged(location: Location) {
         if(location.latitude == MyConstants.PI_50) {
-            Log.d(javaClass.name, "${location.provider} congrats! You found the first 50 digits of PI: ${location.latitude}")
+            Timber.d("${location.provider} congrats! You found the first 50 digits of PI: ${location.latitude}")
             //TODO: make this a toast instead
         }
-        //Log.d(javaClass.name, location.toString())
+        //Timber.d(location.toString())
     }
     override fun onProviderEnabled(provider: String) {}
 
@@ -189,10 +189,10 @@ private class NetworkStresser : Runnable {
             try {
                 val status = con.responseCode //execute the request
                 val inputStream = BufferedInputStream(con.inputStream)
-                Log.d(javaClass.name, "Status: $status")
+                Timber.d("Status: $status")
 
                 if(status != 200) {
-                    Log.e(javaClass.name, "Unexpected status code in network request. Stopping.", )
+                    Timber.e("Unexpected status code in network request. Stopping.")
                     break
                 }
                 val dataChunk = ByteArray(32 * 1024 * 1024) //32 MB buffer
@@ -201,8 +201,8 @@ private class NetworkStresser : Runnable {
                      * optimizing out the entire loop
                      */
                     if (dataChunk[0].toInt() == 300)
-                        Log.d(javaClass.name, "Impossible")
-                    //Log.d(javaClass.name, "Status: $status, Data Chunk[0]: ${dataChunk[0].toInt().toChar()}")
+                        Timber.d(javaClass.name, "Impossible")
+                    //Timber.d("Status: $status, Data Chunk[0]: ${dataChunk[0].toInt().toChar()}")
                 }
 
                 inputStream.close()
@@ -212,6 +212,6 @@ private class NetworkStresser : Runnable {
                 con.disconnect()
             }
         }
-        Log.i(javaClass.name, "Network thread stopped")
+        Timber.i("Network thread stopped")
     }
 }

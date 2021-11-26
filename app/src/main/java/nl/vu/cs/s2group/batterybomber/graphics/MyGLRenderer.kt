@@ -8,7 +8,6 @@ import android.opengl.GLES20
 import android.opengl.GLSurfaceView
 import android.opengl.Matrix
 import android.os.SystemClock
-import android.util.Log
 
 class MyGLRenderer : GLSurfaceView.Renderer {
     private lateinit var mTriangle: Triangle
@@ -51,7 +50,7 @@ class MyGLRenderer : GLSurfaceView.Renderer {
     private var mTempMatrix = FloatArray(16)
 
     override fun onDrawFrame(unused: GL10) {
-        // Log.d(javaClass.name, "Rendering!")
+        // Timber.d("Rendering!")
 
         GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT); // Draw background color
 

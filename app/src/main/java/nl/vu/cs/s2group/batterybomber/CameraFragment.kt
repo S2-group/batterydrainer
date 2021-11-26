@@ -3,7 +3,6 @@ package nl.vu.cs.s2group.batterybomber
 import android.Manifest
 import android.content.pm.PackageManager
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import androidx.camera.core.*
 import androidx.camera.lifecycle.ProcessCameraProvider
@@ -11,6 +10,7 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.fragment_camera.view.*
+import timber.log.Timber
 import java.util.*
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
@@ -63,7 +63,7 @@ class CameraFragment : Fragment(R.layout.fragment_camera) {
                     this, cameraSelector, preview)
 
             } catch(exc: Exception) {
-                Log.e("CameraXBasic", "Use case binding failed", exc)
+                Timber.e(exc, "Use case binding failed")
             }
 
         }, ContextCompat.getMainExecutor(requireActivity()))

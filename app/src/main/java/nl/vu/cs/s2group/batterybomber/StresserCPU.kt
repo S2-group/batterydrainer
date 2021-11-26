@@ -1,7 +1,7 @@
 package nl.vu.cs.s2group.batterybomber
 
-import android.util.Log
 import android.widget.Toast
+import timber.log.Timber
 import java.lang.StringBuilder
 import java.math.BigInteger
 import java.security.MessageDigest
@@ -39,7 +39,7 @@ class StresserCPU: Thread() {
                 //TODO: use toast instead of logcat
                 //Check here https://developer.android.com/guide/background/threading#executing-in-a-background-thread
                 //Toast.makeText(view.context, "Lucky $algorithm hit! Input: $input_str. Output: " + digest.toHex(), Toast.LENGTH_LONG).show()
-                Log.i(javaClass.name, "Lucky $algorithm hit! Input: $input_str. Output: " + digest.toHex())
+                Timber.i("Lucky $algorithm hit! Input: $input_str. Output: " + digest.toHex())
             }
             md.reset()
             random_num++
