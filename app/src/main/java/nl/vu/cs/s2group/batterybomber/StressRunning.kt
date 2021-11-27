@@ -11,6 +11,7 @@ import android.location.Location
 import android.location.LocationListener
 import android.location.LocationManager
 import android.os.Bundle
+import android.os.Handler
 import androidx.fragment.app.Fragment
 import android.view.View
 import android.widget.Button
@@ -31,6 +32,10 @@ import java.util.concurrent.Executor
 import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
 import javax.net.ssl.HttpsURLConnection
+import android.os.Looper
+
+
+
 
 
 /**
@@ -47,6 +52,7 @@ class StressRunning : Fragment(R.layout.fragment_stress_running) {
     private val sensorsListener = SensorsListener()
     private val locationListener = LocationListener()
     private val networkExecutorService = Executors.newSingleThreadExecutor()
+    private val handlerUI: Handler = Handler(Looper.getMainLooper())
 
     private fun startStressTest() {
         val args = StressRunningArgs.fromBundle(requireArguments())
@@ -137,6 +143,59 @@ class StressRunning : Fragment(R.layout.fragment_stress_running) {
         startStressTest()
         Toast.makeText(view.context, "Stress test started!", Toast.LENGTH_LONG).show()
     }
+
+    private abstract inner class Stresser {
+        protected fun impossibleUIUpdateOnMain(impossibleCondition : Boolean) {
+            if(impossibleCondition) {
+                val s = "Impossible from ${javaClass.name}"
+                Timber.d(s)
+                handlerUI.post { Toast.makeText(requireContext(), s, Toast.LENGTH_LONG).show() }
+            }
+        }
+    }
+
+    private inner class NetworkStresser : Stresser(), Runnable {
+        private val SERVER_URL = URL("https://garbage-traffic.netlify.app/garbage.blob")
+        //private val SERVER_URL = URL("http://192.168.0.107:8080/garbage.blob")
+
+        override fun run() {
+            while(!Thread.interrupted()) {
+                val con: HttpsURLConnection = SERVER_URL.openConnection() as HttpsURLConnection
+                //val con: HttpURLConnection = SERVER_URL.openConnection() as HttpURLConnection
+
+                con.requestMethod = "GET"
+                con.setRequestProperty("cache-control", "no-cache,must-revalidate");
+                con.setRequestProperty("accept-encoding", "identity"); //prevent compression on server-side
+
+                try {
+                    val status = con.responseCode //execute the request
+                    val inputStream = BufferedInputStream(con.inputStream)
+                    Timber.d("Status: $status")
+
+                    if(status != 200) {
+                        Timber.e("Unexpected status code in network request. Stopping.")
+                        break
+                    }
+                    val dataChunk = ByteArray(32 * 1024 * 1024) //32 MB buffer
+                    while(inputStream.read(dataChunk) != -1) { //read the response
+                        //Timber.d("Status: $status, Data Chunk[0]: ${dataChunk[0].toInt().toChar()}")
+
+                        /* This if condition is impossible to occur but we keep it to prevent the JVM from
+                         * optimizing out the entire loop
+                         */
+                        impossibleUIUpdateOnMain(dataChunk[0].toInt() xor dataChunk[dataChunk.lastIndex].toInt() == 300)
+                    }
+
+                    inputStream.close()
+                } catch(ex: InterruptedIOException) {
+                    break
+                } finally {
+                    con.disconnect()
+                }
+            }
+            Timber.i("Network thread stopped")
+        }
+    }
 }
 
 private object MyConstants {
@@ -173,45 +232,4 @@ private class LocationListener() : LocationListener {
     override fun onStatusChanged(provider: String?, status: Int, extras: Bundle?) {}
 }
 
-private class NetworkStresser : Runnable {
-    private val SERVER_URL = URL("https://garbage-traffic.netlify.app/garbage.blob")
-    //private val SERVER_URL = URL("http://192.168.0.107:8080/garbage.blob")
 
-    override fun run() {
-        while(!Thread.interrupted()) {
-            val con: HttpsURLConnection = SERVER_URL.openConnection() as HttpsURLConnection
-            //val con: HttpURLConnection = SERVER_URL.openConnection() as HttpURLConnection
-
-            con.requestMethod = "GET"
-            con.setRequestProperty("cache-control", "no-cache,must-revalidate");
-            con.setRequestProperty("accept-encoding", "identity"); //prevent compression on server-side
-
-            try {
-                val status = con.responseCode //execute the request
-                val inputStream = BufferedInputStream(con.inputStream)
-                Timber.d("Status: $status")
-
-                if(status != 200) {
-                    Timber.e("Unexpected status code in network request. Stopping.")
-                    break
-                }
-                val dataChunk = ByteArray(32 * 1024 * 1024) //32 MB buffer
-                while(inputStream.read(dataChunk) != -1) { //read the response
-                    /* This if condition is impossible to occur but we keep it to prevent the JVM from
-                     * optimizing out the entire loop
-                     */
-                    if (dataChunk[0].toInt() == 300)
-                        Timber.d(javaClass.name, "Impossible")
-                    //Timber.d("Status: $status, Data Chunk[0]: ${dataChunk[0].toInt().toChar()}")
-                }
-
-                inputStream.close()
-            } catch(ex: InterruptedIOException) {
-                break
-            } finally {
-                con.disconnect()
-            }
-        }
-        Timber.i("Network thread stopped")
-    }
-}
