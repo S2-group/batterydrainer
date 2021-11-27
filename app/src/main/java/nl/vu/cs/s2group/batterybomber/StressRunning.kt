@@ -33,9 +33,9 @@ import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
 import javax.net.ssl.HttpsURLConnection
 import android.os.Looper
-
-
-
+import java.math.BigInteger
+import java.security.MessageDigest
+import kotlin.random.Random
 
 
 /**
@@ -47,8 +47,7 @@ class StressRunning : Fragment(R.layout.fragment_stress_running) {
     private lateinit var sensorManager: SensorManager
     private lateinit var locationManager: LocationManager
 
-    private val cpuStressThreads = arrayListOf<Thread>()
-    private var stressedSensors : List<Sensor>? = null
+    private var cpuStressThreads : List<Thread>? = null
     private val sensorsListener = SensorsListener()
     private val locationListener = LocationListener()
     private val networkExecutorService = Executors.newSingleThreadExecutor()
@@ -60,11 +59,10 @@ class StressRunning : Fragment(R.layout.fragment_stress_running) {
             val cores = Runtime.getRuntime().availableProcessors()
             Timber.d("Cores available: $cores. Spawning CPU stresser threads")
 
-            (1..cores).forEach{ _ ->
-                val stresserCPU = StresserCPU()
-                cpuStressThreads.add(stresserCPU)
-                stresserCPU.start()
-            }
+            cpuStressThreads = (1..cores).map {
+                Thread(StresserCPU())
+            }.toList()
+            cpuStressThreads!!.forEach{ it.start() }
         }
         if(args.cameraStress) {
             requireActivity().supportFragmentManager.commit {
@@ -74,8 +72,7 @@ class StressRunning : Fragment(R.layout.fragment_stress_running) {
         }
 
         if(args.sensorsStress) {
-            stressedSensors = sensorManager.getSensorList(Sensor.TYPE_ALL)
-            stressedSensors!!.forEach { sensor ->
+            sensorManager.getSensorList(Sensor.TYPE_ALL).forEach { sensor ->
                 Timber.d("Stressing sensor: ${sensor.name}")
                 sensorManager.registerListener(sensorsListener, sensor, SensorManager.SENSOR_DELAY_FASTEST)
             }
@@ -113,10 +110,10 @@ class StressRunning : Fragment(R.layout.fragment_stress_running) {
 
     }
     private fun stopStressTest() {
-        cpuStressThreads.forEach {
+        Timber.d("Stopping stress tests")
+        cpuStressThreads?.forEach {
             it.interrupt()
         }
-        cpuStressThreads.clear()
         sensorManager.unregisterListener(sensorsListener)
         locationManager.removeUpdates(locationListener)
 
@@ -124,6 +121,7 @@ class StressRunning : Fragment(R.layout.fragment_stress_running) {
         while(!networkExecutorService.awaitTermination(5, TimeUnit.SECONDS)) {
             /* Wait for termination */
         }
+        Timber.d("Stress tests stopped")
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -132,7 +130,6 @@ class StressRunning : Fragment(R.layout.fragment_stress_running) {
         locationManager = requireContext().getSystemService(Context.LOCATION_SERVICE) as LocationManager
         val stopButton : Button = view.findViewById(R.id.stop_stress_button)
         stopButton.setOnClickListener {
-            stopStressTest()
             view.findNavController().navigate(StressRunningDirections.actionStressRunningToStressChoices())
         }
 
@@ -144,18 +141,50 @@ class StressRunning : Fragment(R.layout.fragment_stress_running) {
         Toast.makeText(view.context, "Stress test started!", Toast.LENGTH_LONG).show()
     }
 
+    override fun onDestroyView() {
+        super.onDestroyView()
+        stopStressTest()
+    }
+
     private abstract inner class Stresser {
+        /**
+         * This function exists so that each Stresser does not get optimized out
+         */
         protected fun impossibleUIUpdateOnMain(impossibleCondition : Boolean) {
             if(impossibleCondition) {
-                val s = "Impossible from ${javaClass.name}"
+                val s = "Impossible result from ${javaClass.name}"
                 Timber.d(s)
                 handlerUI.post { Toast.makeText(requireContext(), s, Toast.LENGTH_LONG).show() }
             }
         }
     }
 
+    private inner class SensorsListener() : Stresser(), SensorEventListener {
+
+        override fun onSensorChanged(event: SensorEvent) {
+            impossibleUIUpdateOnMain(event.values[0].toDouble() == MyConstants.PI_50)
+            //Timber.d("onSensorChanged: ${event.sensor.name} ${event.values[0]}")
+        }
+
+        override fun onAccuracyChanged(sensor: Sensor, accuracy: Int) {
+            Timber.d("onAccuracyChanged: ${sensor.name}. New accuracy: $accuracy")
+        }
+    }
+
+    private inner class LocationListener() : Stresser(), android.location.LocationListener {
+        override fun onLocationChanged(location: Location) {
+            impossibleUIUpdateOnMain(location.latitude == MyConstants.PI_50)
+            //Timber.d(location.toString())
+        }
+
+        override fun onProviderEnabled(provider: String) = Unit
+        override fun onProviderDisabled(provider: String) = Unit
+        override fun onStatusChanged(provider: String?, status: Int, extras: Bundle?) = Unit
+    }
+
     private inner class NetworkStresser : Stresser(), Runnable {
         private val SERVER_URL = URL("https://garbage-traffic.netlify.app/garbage.blob")
+        private val dataChunk = ByteArray(32 * 1024 * 1024) //32 MB buffer
         //private val SERVER_URL = URL("http://192.168.0.107:8080/garbage.blob")
 
         override fun run() {
@@ -176,14 +205,13 @@ class StressRunning : Fragment(R.layout.fragment_stress_running) {
                         Timber.e("Unexpected status code in network request. Stopping.")
                         break
                     }
-                    val dataChunk = ByteArray(32 * 1024 * 1024) //32 MB buffer
                     while(inputStream.read(dataChunk) != -1) { //read the response
                         //Timber.d("Status: $status, Data Chunk[0]: ${dataChunk[0].toInt().toChar()}")
 
                         /* This if condition is impossible to occur but we keep it to prevent the JVM from
                          * optimizing out the entire loop
                          */
-                        impossibleUIUpdateOnMain(dataChunk[0].toInt() xor dataChunk[dataChunk.lastIndex].toInt() == 300)
+                        impossibleUIUpdateOnMain(dataChunk[0].toInt() xor dataChunk.last().toInt() == 300)
                     }
 
                     inputStream.close()
@@ -196,40 +224,36 @@ class StressRunning : Fragment(R.layout.fragment_stress_running) {
             Timber.i("Network thread stopped")
         }
     }
+
+    private inner class StresserCPU: Stresser(), Runnable {
+        fun ByteArray.toHex(): String = joinToString(separator = "") { b -> "%02x".format(b) }
+
+        override fun run() {
+            val randomSeed =  BigInteger( (1..20)
+                .map { _ -> Random.nextInt(0, 10) }
+                .map { i -> i.toString() }
+                .joinToString("")
+            ) //20 digit random number
+
+            val algorithm = "SHA-512"
+            val md = MessageDigest.getInstance(algorithm)
+            val luckySuffix = (1..20).map { "0" }.joinToString("")
+            var randomNum = randomSeed
+
+            /* TODO: maybe reuse memory here to prevent the Garbage Collector from kicking in */
+            while(!Thread.interrupted()) {
+                val digest = md.digest(randomNum.toByteArray())
+
+                impossibleUIUpdateOnMain(digest.toHex().endsWith(luckySuffix))
+
+                md.reset()
+                randomNum++
+            }
+        }
+    }
 }
 
 private object MyConstants {
     val PI_50 : Double = 3.1415926535897932384626433832795028841971
 }
-
-private class SensorsListener() : SensorEventListener {
-
-    override fun onSensorChanged(event: SensorEvent) {
-        if(event.values[0].toDouble() == MyConstants.PI_50) {
-            Timber.d("${event.sensor.name} congrats! You found the first 50 digits of PI: ${event.values[0]}")
-            //TODO: make this a toast instead
-        }
-        //Timber.d("onSensorChanged: ${event.sensor.name} ${event.values[0]}")
-    }
-
-    override fun onAccuracyChanged(sensor: Sensor, accuracy: Int) {
-        Timber.d("onAccuracyChanged: ${sensor.name}. New accuracy: $accuracy")
-    }
-}
-
-private class LocationListener() : LocationListener {
-    override fun onLocationChanged(location: Location) {
-        if(location.latitude == MyConstants.PI_50) {
-            Timber.d("${location.provider} congrats! You found the first 50 digits of PI: ${location.latitude}")
-            //TODO: make this a toast instead
-        }
-        //Timber.d(location.toString())
-    }
-    override fun onProviderEnabled(provider: String) {}
-
-    override fun onProviderDisabled(provider: String) {}
-
-    override fun onStatusChanged(provider: String?, status: Int, extras: Bundle?) {}
-}
-
 
