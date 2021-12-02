@@ -34,7 +34,9 @@ import java.util.concurrent.TimeUnit
 import javax.net.ssl.HttpsURLConnection
 import android.os.Looper
 import java.math.BigInteger
+import java.nio.ByteBuffer
 import java.security.MessageDigest
+import java.util.*
 import kotlin.random.Random
 
 
@@ -226,28 +228,20 @@ class StressRunning : Fragment(R.layout.fragment_stress_running) {
     }
 
     private inner class StresserCPU: Stresser(), Runnable {
-        fun ByteArray.toHex(): String = joinToString(separator = "") { b -> "%02x".format(b) }
 
         override fun run() {
-            val randomSeed =  BigInteger( (1..20)
-                .map { _ -> Random.nextInt(0, 10) }
-                .map { i -> i.toString() }
-                .joinToString("")
-            ) //20 digit random number
-
             val algorithm = "SHA-512"
             val md = MessageDigest.getInstance(algorithm)
-            val luckySuffix = (1..20).map { "0" }.joinToString("")
-            var randomNum = randomSeed
+            val luckyDigest : ByteArray = ByteBuffer.allocate(64).also { bb -> (1..32).forEach{ bb.put(0x1A); bb.put(0x2B) } }.array() //1A2B1A2B..2B - 64 bytes = 512 bits
 
-            /* TODO: maybe reuse memory here to prevent the Garbage Collector from kicking in */
+            val buffer: ByteBuffer = ByteBuffer.allocate(Long.SIZE_BYTES)
+            var randomNum = Random.nextLong()
+            var digest: ByteArray
+
             while(!Thread.interrupted()) {
-                val digest = md.digest(randomNum.toByteArray())
-
-                impossibleUIUpdateOnMain(digest.toHex().endsWith(luckySuffix))
-
-                md.reset()
-                randomNum++
+                buffer.putLong(0, randomNum++)
+                digest = md.digest(buffer.array())
+                impossibleUIUpdateOnMain(digest.contentEquals(luckyDigest))
             }
         }
     }
