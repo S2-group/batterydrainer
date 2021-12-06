@@ -34,6 +34,7 @@ import java.util.concurrent.TimeUnit
 import javax.net.ssl.HttpsURLConnection
 import android.os.Looper
 import java.math.BigInteger
+import java.net.ProtocolException
 import java.nio.ByteBuffer
 import java.security.MessageDigest
 import java.util.*
@@ -197,6 +198,7 @@ class StressRunning : Fragment(R.layout.fragment_stress_running) {
                 con.requestMethod = "GET"
                 con.setRequestProperty("cache-control", "no-cache,must-revalidate");
                 con.setRequestProperty("accept-encoding", "identity"); //prevent compression on server-side
+                con.setRequestProperty("connection", "close")
 
                 try {
                     val status = con.responseCode //execute the request
@@ -219,6 +221,9 @@ class StressRunning : Fragment(R.layout.fragment_stress_running) {
                     inputStream.close()
                 } catch(ex: InterruptedIOException) {
                     break
+                } catch (ex: ProtocolException) {
+                    //Can be thrown sometimes due to the large repetitive download. Simply re-download
+                    continue
                 } finally {
                     con.disconnect()
                 }
