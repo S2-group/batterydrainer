@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/sourceViewItem"
+        android:enabled="true"
+        android:title="@string/energy_sources"
+        android:icon="@drawable/ic_baseline_settings_input_component_24"/>
+    <item
+        android:id="@+id/liveViewItem"
+        android:enabled="true"
+        android:title="@string/live_view"
+        android:icon="@drawable/ic_baseline_timeline_24"/>
+</menu>

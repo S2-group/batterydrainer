@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/navigation"
-    app:startDestination="@id/stressChoices">
+    app:startDestination="@id/sourceView">
 
     <fragment
         android:id="@+id/stressChoices"
@@ -40,4 +40,14 @@
             android:name="gpuStress"
             app:argType="boolean" />
     </fragment>
+    <fragment
+        android:id="@+id/liveView"
+        android:name="nl.vu.cs.s2group.batterybomber.LiveView"
+        android:label="fragment_live_view"
+        tools:layout="@layout/fragment_live_view" />
+    <fragment
+        android:id="@+id/sourceView"
+        android:name="nl.vu.cs.s2group.batterybomber.SourceView"
+        android:label="fragment_source_view"
+        tools:layout="@layout/fragment_source_view" />
 </navigation>

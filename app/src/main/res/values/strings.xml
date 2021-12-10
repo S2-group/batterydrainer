@@ -11,4 +11,6 @@
     <string name="network_stress">Network stress</string>
     <string name="gpu_stress">GPU stress</string>
     <string name="selected_components">Selected Components</string>
+    <string name="energy_sources">Energy Sources</string>
+    <string name="live_view">Live View</string>
 </resources>
