@@ -7,13 +7,9 @@ import timber.log.Timber
 class MainActivity : AppCompatActivity(R.layout.activity_main) {
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        Thread.sleep(400) //artificial delay before we switch from the splash screen
-        setTheme(R.style.Theme_BatteryBomber)
         super.onCreate(savedInstanceState)
-
         if (BuildConfig.DEBUG) {
             Timber.plant(Timber.DebugTree())
         }
-
     }
 }

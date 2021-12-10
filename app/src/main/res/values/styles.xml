@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- The launcher theme. It sets the main window background to the launch_screen drawable -->
+    <style name="SplashScreenTheme" parent="Theme.AppCompat.NoActionBar">
+        <item name="android:windowBackground">@drawable/splash</item>
+        <item name="colorPrimaryDark">@android:color/white</item>
+    </style>
+</resources>
