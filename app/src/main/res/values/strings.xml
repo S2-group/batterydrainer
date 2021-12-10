@@ -13,4 +13,11 @@
     <string name="selected_components">Selected Components</string>
     <string name="energy_sources">Energy Sources</string>
     <string name="live_view">Live View</string>
+    <string name="cpu_stress_choice">CPU stress choice</string>
+    <string name="location">Location</string>
+    <string name="network">Network</string>
+    <string name="sensors">Sensors</string>
+    <string name="camera">Camera</string>
+    <string name="gpu">GPU</string>
+    <string name="cpu">CPU</string>
 </resources>
