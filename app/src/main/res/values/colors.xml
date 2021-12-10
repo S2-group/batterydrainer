@@ -8,4 +8,23 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
     <color name="gray">#8C8C8C</color>
+
+    <!-- https://material.io/resources/color/#!/?view.left=0&view.right=0&primary.color=66BB6A&secondary.color=7CB342-->
+<!--    <color name="primaryColor">#66bb6a</color>-->
+<!--    <color name="primaryLightColor">#98ee99</color>-->
+<!--    <color name="primaryDarkColor">#338a3e</color>-->
+<!--    <color name="secondaryColor">#7cb342</color>-->
+<!--    <color name="secondaryLightColor">#aee571</color>-->
+<!--    <color name="secondaryDarkColor">#4b830d</color>-->
+<!--    <color name="primaryTextColor">#000000</color>-->
+<!--    <color name="secondaryTextColor">#000000</color>-->
+
+    <color name="primaryColor">#4CAF50</color>
+    <color name="primaryDarkColor">#388E3C</color>
+    <color name="primaryLightColor">#C8E6C9</color>
+    <color name="secondaryColor">#8BC34A</color>
+    <color name="primaryTextColor">#212121</color>
+    <color name="secondaryTextColor">#757575</color>
+<!--    <color name="icons">#FFFFFF</color>-->
+<!--    <color name="divider">#BDBDBD</color>-->
 </resources>
