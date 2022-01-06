@@ -25,11 +25,25 @@ class MainActivity : AppCompatActivity(R.layout.activity_main) {
     private var activeFragment      : Fragment = sourcesViewFragment
 
     private fun switchToFragmentSourceView() : Boolean {
-        supportFragmentManager.beginTransaction().hide(activeFragment).show(sourcesViewFragment).commit();
+        supportFragmentManager.beginTransaction().apply {
+            hide(activeFragment)
+
+            activeFragment = sourcesViewFragment
+            show(activeFragment)
+            // addToBackStack("sourcesViewFragment") //FIXME: the bottom_navigation_view doesn't get updated
+            commit()
+        }
         return true
     }
     private fun switchToFragmentLiveView() : Boolean {
-        supportFragmentManager.beginTransaction().hide(activeFragment).show(liveViewFragment).commit();
+        supportFragmentManager.beginTransaction().apply {
+            hide(activeFragment)
+
+            activeFragment = liveViewFragment
+            show(activeFragment)
+            // addToBackStack("liveViewFragment") //FIXME: the bottom_navigation_view doesn't get updated
+            commit()
+        }
         return true
     }
 
@@ -55,10 +69,16 @@ class MainActivity : AppCompatActivity(R.layout.activity_main) {
         }
 
         //Workaround since BottomNavigationView does not support fragment states
-        //https://medium.com/@oluwabukunmi.aluko/bottom-navigation-view-with-fragments-a074bfd08711
         //Programmatically create the two fragments and commit them. Keep the "Sources View" visible as it is the starting fragment
-        supportFragmentManager.beginTransaction().add(R.id.nav_fragment, liveViewFragment   , "2").hide(liveViewFragment).commit();
-        supportFragmentManager.beginTransaction().add(R.id.nav_fragment, sourcesViewFragment, "1").commit();
-        supportFragmentManager.beginTransaction().replace(R.id.nav_fragment, activeFragment).commit()
+        supportFragmentManager.beginTransaction().apply {
+            replace(R.id.nav_fragment, sourcesViewFragment, "sourcesViewFragment") // In the first case, we replace the fragment that is taken from the nav graph
+            hide(sourcesViewFragment)
+            add(R.id.nav_fragment, liveViewFragment, "liveViewFragment")
+            hide(liveViewFragment)
+
+            activeFragment = sourcesViewFragment
+            show(activeFragment)
+            commit()
+        }
     }
 }
