@@ -2,8 +2,10 @@ package nl.vu.cs.s2group.batterybomber
 
 import android.os.Bundle
 import android.view.View
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import com.google.android.material.card.MaterialCardView
+import nl.vu.cs.s2group.batterybomber.graphics.MyGLSurfaceView
 import timber.log.Timber
 
 /**
@@ -23,11 +25,17 @@ class SourceView : Fragment(R.layout.fragment_source_view) {
         val networkCard  : MaterialCardView = view.findViewById(R.id.networkCard)
         val locationCard : MaterialCardView = view.findViewById(R.id.locationCard)
 
+        val gpuCanvas: MyGLSurfaceView = requireView().findViewById(R.id.myGLSurfaceView)
+
         cpuCard.setOnClickListener {
             cpuCard.toggle()
         }
         gpuCard.setOnClickListener {
             gpuCard.toggle()
+
+            //Start/Stop GPU stressing
+            Timber.d("Stressing GPU: ${gpuCard.isChecked}")
+            gpuCanvas.isVisible = gpuCard.isChecked
         }
         cameraCard.setOnClickListener {
             cameraCard.toggle()

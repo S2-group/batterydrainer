@@ -8,6 +8,7 @@ import android.opengl.GLES20
 import android.opengl.GLSurfaceView
 import android.opengl.Matrix
 import android.os.SystemClock
+import timber.log.Timber
 
 class MyGLRenderer : GLSurfaceView.Renderer {
     private lateinit var mTriangle: Triangle
@@ -19,7 +20,8 @@ class MyGLRenderer : GLSurfaceView.Renderer {
     private val projectionMatrix = FloatArray(16)
     private val viewMatrix = FloatArray(16)
 
-    private val rotationMatrix = FloatArray(16)
+    private var width : Int = 0
+    private var height : Int = 0
 
 
     override fun onSurfaceCreated(unused: GL10, config: EGLConfig) {
@@ -50,7 +52,7 @@ class MyGLRenderer : GLSurfaceView.Renderer {
     private var mTempMatrix = FloatArray(16)
 
     override fun onDrawFrame(unused: GL10) {
-        // Timber.d("Rendering!")
+        Timber.d("Rendering!")
 
         GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT); // Draw background color
 
@@ -62,11 +64,14 @@ class MyGLRenderer : GLSurfaceView.Renderer {
         val angle = 0.090f * time.toInt()
         val dx = 1.2f
         val dy = 1.3f
-        for(i in 0 until 76) {
-            for (j in 0 until 45) {
+        val (rows, cols) = arrayOf(75, 81)
+        val (rows_excess, cols_excess) = arrayOf(0, 0) // How many rows,cols will be drawn outside of the display area. These still consume resources.
+
+        for(i in 0 until rows + rows_excess) {
+            for (j in 0 until cols + cols_excess) {
                 Matrix.setIdentityM(mModelMatrix, 0);
                 Matrix.scaleM(mModelMatrix, 0, 0.02f, 0.02f, 0.02f) //make it smaller
-                Matrix.translateM(mModelMatrix, 0, 26.5f, 48.5f, 0.0f)  //move to top-left corner
+                Matrix.translateM(mModelMatrix, 0, 48.0f, 48.0f, 0.0f)  //move to top-left corner
 
                 Matrix.translateM(mModelMatrix, 0, -j * dx, -i*dy, 0.0f)
 
@@ -87,6 +92,10 @@ class MyGLRenderer : GLSurfaceView.Renderer {
     }
 
     override fun onSurfaceChanged(unused: GL10, width: Int, height: Int) {
+        Timber.d("GPU rendering surface: $width x $height")
+        this.width  = width
+        this.height = height
+
         GLES20.glViewport(0, 0, width, height)
 
         val ratio: Float = width.toFloat() / height.toFloat()
