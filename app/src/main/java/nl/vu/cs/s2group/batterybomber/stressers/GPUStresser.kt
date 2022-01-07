@@ -4,7 +4,7 @@ import android.content.Context
 import android.view.View
 import androidx.core.view.isVisible
 
-class GPUStresser(val context: Context, val gpuCanvas: View) : Stresser(context) {
+class GPUStresser(context: Context, private val gpuCanvas: View) : Stresser(context) {
 
     override fun start() {
         super.start()

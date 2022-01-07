@@ -6,7 +6,7 @@ import android.os.Looper
 import android.widget.Toast
 import timber.log.Timber
 
-abstract class Stresser (private val context: Context) {
+abstract class Stresser (protected val context: Context) {
     protected val handlerUI = Handler(Looper.getMainLooper())
     var isRunning = false
 
@@ -19,6 +19,10 @@ abstract class Stresser (private val context: Context) {
             Timber.d(s)
             handlerUI.post { Toast.makeText(context, s, Toast.LENGTH_LONG).show() }
         }
+    }
+
+    open fun permissionsGranted(): Boolean {
+        return true
     }
 
     open fun start() {
