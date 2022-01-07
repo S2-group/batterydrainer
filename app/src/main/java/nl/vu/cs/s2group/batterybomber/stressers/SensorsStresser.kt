@@ -8,10 +8,7 @@ import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
 import android.hardware.SensorManager
 import android.os.Build
-import androidx.annotation.RequiresApi
 import androidx.core.content.ContextCompat
-import androidx.fragment.app.add
-import androidx.fragment.app.commit
 import nl.vu.cs.s2group.batterybomber.*
 import timber.log.Timber
 
