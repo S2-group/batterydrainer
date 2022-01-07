@@ -10,6 +10,7 @@ import com.google.android.material.card.MaterialCardView
 import nl.vu.cs.s2group.batterybomber.stressers.CPUStresser
 import nl.vu.cs.s2group.batterybomber.stressers.CameraStresser
 import nl.vu.cs.s2group.batterybomber.stressers.GPUStresser
+import nl.vu.cs.s2group.batterybomber.stressers.SensorsStresser
 import timber.log.Timber
 
 /**
@@ -21,6 +22,7 @@ class SourceView : Fragment(R.layout.fragment_source_view) {
     private lateinit var cpuStresser: CPUStresser
     private lateinit var gpuStresser: GPUStresser
     private lateinit var cameraStresser: CameraStresser
+    private lateinit var sensorsStresser: SensorsStresser
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -35,6 +37,7 @@ class SourceView : Fragment(R.layout.fragment_source_view) {
         cpuStresser = CPUStresser(requireContext())
         gpuStresser = GPUStresser(requireContext(), requireView().findViewById(R.id.myGLSurfaceView))
         cameraStresser = CameraStresser(requireContext(), childFragmentManager)
+        sensorsStresser = SensorsStresser(requireContext())
 
         val requestCameraPermissionLauncher = registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted: Boolean ->
             if (isGranted) {
@@ -47,6 +50,15 @@ class SourceView : Fragment(R.layout.fragment_source_view) {
                 // same time, respect the user's decision.
                 cameraCard.isChecked = false
                 Toast.makeText(requireContext(), "CAMERA denied by the user.", Toast.LENGTH_SHORT).show()
+            }
+        }
+        val requestHSRSensorsLauncher = registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted: Boolean ->
+            if (isGranted) {
+                Timber.d("HIGH_SAMPLING_RATE_SENSORS permission is granted")
+                sensorsStresser.start()
+            } else {
+                sensorsCard.isChecked = false
+                Toast.makeText(requireContext(), "HIGH_SAMPLING_RATE_SENSORS denied by the user.", Toast.LENGTH_SHORT).show()
             }
         }
 
@@ -83,6 +95,17 @@ class SourceView : Fragment(R.layout.fragment_source_view) {
         }
         sensorsCard.setOnClickListener {
             sensorsCard.toggle()
+
+            if(sensorsCard.isChecked && !sensorsStresser.permissionsGranted()) {
+                requestCameraPermissionLauncher.launch(Manifest.permission.CAMERA)
+                return@setOnClickListener
+            }
+
+            assert(sensorsStresser.permissionsGranted())
+            when(sensorsCard.isChecked) {
+                true  -> sensorsStresser.start()
+                false -> sensorsStresser.stop()
+            }
         }
         networkCard.setOnClickListener {
             networkCard.toggle()
@@ -107,5 +130,8 @@ class SourceView : Fragment(R.layout.fragment_source_view) {
 
         if(cameraStresser.isRunning)
             cameraStresser.stop()
+
+        if(sensorsStresser.isRunning)
+            sensorsStresser.stop()
     }
 }
