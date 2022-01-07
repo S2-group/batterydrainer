@@ -21,6 +21,7 @@ class SourceView : Fragment(R.layout.fragment_source_view) {
     private lateinit var gpuStresser: GPUStresser
     private lateinit var cameraStresser: CameraStresser
     private lateinit var sensorsStresser: SensorsStresser
+    private lateinit var networkStresser: NetworkStresser
 
     private lateinit var stresserList : ArrayList<Stresser>
 
@@ -33,12 +34,14 @@ class SourceView : Fragment(R.layout.fragment_source_view) {
         val sensorsCard  : MaterialCardView = view.findViewById(R.id.sensorsCard)
         val networkCard  : MaterialCardView = view.findViewById(R.id.networkCard)
         val locationCard : MaterialCardView = view.findViewById(R.id.locationCard)
+        val context = requireContext()
 
-        cpuStresser = CPUStresser(requireContext())
-        gpuStresser = GPUStresser(requireContext(), requireView().findViewById(R.id.myGLSurfaceView))
-        cameraStresser = CameraStresser(requireContext(), childFragmentManager)
-        sensorsStresser = SensorsStresser(requireContext())
-        stresserList =  arrayListOf<Stresser>(cpuStresser, gpuStresser, cameraStresser, sensorsStresser)
+        cpuStresser = CPUStresser(context)
+        gpuStresser = GPUStresser(context, requireView().findViewById(R.id.myGLSurfaceView))
+        cameraStresser = CameraStresser(context, childFragmentManager)
+        sensorsStresser = SensorsStresser(context)
+        networkStresser = NetworkStresser(context)
+        stresserList =  arrayListOf(cpuStresser, gpuStresser, cameraStresser, sensorsStresser, networkStresser)
 
         fun stresserPermissionLauncher(isGranted: Boolean, permissionName: String, stresser: Stresser, cardView: MaterialCardView) {
             if (isGranted) {
@@ -104,6 +107,8 @@ class SourceView : Fragment(R.layout.fragment_source_view) {
         }
         networkCard.setOnClickListener {
             networkCard.toggle()
+
+            stresserOnClick(networkStresser, networkCard)
         }
         locationCard.setOnClickListener {
             locationCard.toggle()
