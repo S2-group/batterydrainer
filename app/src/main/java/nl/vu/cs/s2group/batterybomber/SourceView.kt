@@ -1,12 +1,18 @@
 package nl.vu.cs.s2group.batterybomber
 
 import android.Manifest
+import android.content.Context
+import android.content.IntentSender
+import android.location.LocationManager
 import android.os.Build
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
+import com.google.android.gms.common.api.ResolvableApiException
+import com.google.android.gms.location.*
+import com.google.android.gms.tasks.Task
 import com.google.android.material.card.MaterialCardView
 import nl.vu.cs.s2group.batterybomber.stressers.*
 import timber.log.Timber
@@ -17,13 +23,15 @@ import timber.log.Timber
  * create an instance of this fragment.
  */
 class SourceView : Fragment(R.layout.fragment_source_view) {
-    private lateinit var cpuStresser: CPUStresser
-    private lateinit var gpuStresser: GPUStresser
-    private lateinit var cameraStresser: CameraStresser
-    private lateinit var sensorsStresser: SensorsStresser
-    private lateinit var networkStresser: NetworkStresser
+    protected val REQUEST_CHECK_SETTINGS = 0x1
 
-    private lateinit var stresserList : ArrayList<Stresser>
+    private lateinit var cpuStresser        : CPUStresser
+    private lateinit var gpuStresser        : GPUStresser
+    private lateinit var cameraStresser     : CameraStresser
+    private lateinit var sensorsStresser    : SensorsStresser
+    private lateinit var networkStresser    : NetworkStresser
+    private lateinit var locationStresser   : LocationStresser
+    private lateinit var stressersList      : ArrayList<Stresser>
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -36,12 +44,13 @@ class SourceView : Fragment(R.layout.fragment_source_view) {
         val locationCard : MaterialCardView = view.findViewById(R.id.locationCard)
         val context = requireContext()
 
-        cpuStresser = CPUStresser(context)
-        gpuStresser = GPUStresser(context, requireView().findViewById(R.id.myGLSurfaceView))
-        cameraStresser = CameraStresser(context, childFragmentManager)
-        sensorsStresser = SensorsStresser(context)
-        networkStresser = NetworkStresser(context)
-        stresserList =  arrayListOf(cpuStresser, gpuStresser, cameraStresser, sensorsStresser, networkStresser)
+        cpuStresser         = CPUStresser     (context)
+        gpuStresser         = GPUStresser     (context, view.findViewById(R.id.myGLSurfaceView))
+        cameraStresser      = CameraStresser  (context, childFragmentManager)
+        sensorsStresser     = SensorsStresser (context)
+        networkStresser     = NetworkStresser (context)
+        locationStresser    = LocationStresser(context)
+        stressersList       = arrayListOf(cpuStresser, gpuStresser, cameraStresser, sensorsStresser, networkStresser, locationStresser)
 
         fun stresserPermissionLauncher(isGranted: Boolean, permissionName: String, stresser: Stresser, cardView: MaterialCardView) {
             if (isGranted) {
@@ -63,10 +72,13 @@ class SourceView : Fragment(R.layout.fragment_source_view) {
         val requestHSRSensorsLauncher = registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted: Boolean ->
             stresserPermissionLauncher(isGranted, "HIGH_SAMPLING_RATE_SENSORS", sensorsStresser, sensorsCard)
         }
-
+        val requestLocationLauncher = registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted: Boolean ->
+            if (isGranted)
+                requestHighAccuracyLocation()
+            stresserPermissionLauncher(isGranted, "ACCESS_FINE_LOCATION", locationStresser, locationCard)
+        }
 
         fun stresserOnClick(stresser: Stresser, cardView: MaterialCardView) {
-
             assert(stresser.permissionsGranted())
             when(cardView.isChecked) {
                 true  -> stresser.start()
@@ -75,12 +87,10 @@ class SourceView : Fragment(R.layout.fragment_source_view) {
         }
         cpuCard.setOnClickListener {
             cpuCard.toggle()
-
             stresserOnClick(cpuStresser, cpuCard)
         }
         gpuCard.setOnClickListener {
             gpuCard.toggle()
-
             stresserOnClick(gpuStresser, gpuCard)
         }
         cameraCard.setOnClickListener {
@@ -107,11 +117,20 @@ class SourceView : Fragment(R.layout.fragment_source_view) {
         }
         networkCard.setOnClickListener {
             networkCard.toggle()
-
             stresserOnClick(networkStresser, networkCard)
         }
         locationCard.setOnClickListener {
             locationCard.toggle()
+
+            if(locationCard.isChecked) {
+                if(!locationStresser.permissionsGranted()) {
+                    requestLocationLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION) //First requests the location permission and then requests the high accuracy
+                    return@setOnClickListener
+                }
+                requestHighAccuracyLocation()
+            }
+
+            stresserOnClick(locationStresser, locationCard)
         }
     }
 
@@ -122,9 +141,38 @@ class SourceView : Fragment(R.layout.fragment_source_view) {
     }
 
     private fun stopStressTest() {
-        stresserList.forEach{stresser ->
+        stressersList.forEach{ stresser ->
             if(stresser.isRunning)
                 stresser.stop()
         }
+    }
+
+    /** Request user to change "Location Mode" in settings to "High Accuracy" */
+    private fun requestHighAccuracyLocation() {
+        //Request user to change "Location Mode" in settings to "High Accuracy"
+        val mLocationRequest = LocationRequest.create().apply {
+            interval = 1
+            fastestInterval = 1
+            priority = LocationRequest.PRIORITY_HIGH_ACCURACY
+        }
+        val locationManager = requireContext().getSystemService(Context.LOCATION_SERVICE) as LocationManager
+
+        val builder = LocationSettingsRequest.Builder()
+            .addLocationRequest(mLocationRequest)
+            .setNeedBle(true)
+        val client: SettingsClient = LocationServices.getSettingsClient(requireContext())
+        val task : Task<LocationSettingsResponse> = client.checkLocationSettings(builder.build())
+        task.addOnSuccessListener {
+            Timber.i("Location mode HIGH_ACCURACY is enabled")
+            Timber.i(locationManager.getProviders(true).joinToString(prefix="Enabled Location Providers: "))
+        }
+        task.addOnFailureListener { exception ->
+            if (exception is ResolvableApiException){
+                // Location settings are not satisfied, but this can be fixed by showing the user a dialog.
+                try {
+                    // Show the dialog by calling startResolutionForResult(), and check the result in onActivityResult().
+                    startIntentSenderForResult(exception.status.resolution.intentSender, REQUEST_CHECK_SETTINGS, null, 0, 0, 0, null)
+                } catch (sendEx: IntentSender.SendIntentException) { /* Ignore the error */ }
+            } }
     }
 }
