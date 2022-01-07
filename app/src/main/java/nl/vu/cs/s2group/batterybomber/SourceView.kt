@@ -1,7 +1,9 @@
 package nl.vu.cs.s2group.batterybomber
 
 import android.Manifest
+import android.app.Activity
 import android.content.Context
+import android.content.Intent
 import android.content.IntentSender
 import android.location.LocationManager
 import android.os.Build
@@ -175,4 +177,23 @@ class SourceView : Fragment(R.layout.fragment_source_view) {
                 } catch (sendEx: IntentSender.SendIntentException) { /* Ignore the error */ }
             } }
     }
+
+    /*
+    // This code part is in case that we want to force the user into "High Accuracy" in "Location Mode".
+    // By commenting out this part, we allow the other location modes and request "High Accuracy" whenever the card is selected
+    @Override
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        //val states : LocationSettingsStates = LocationSettingsStates.fromIntent(data)
+        if(requestCode == REQUEST_CHECK_SETTINGS) {
+            if(resultCode == Activity.RESULT_OK) {
+                Timber.i("Location mode HIGH_ACCURACY granted")
+            } else if(resultCode == Activity.RESULT_CANCELED) {
+                Toast.makeText(requireContext(), "Location mode HIGH_ACCURACY denied by the user.", Toast.LENGTH_SHORT).show()
+                val locationCard : MaterialCardView = requireView().findViewById(R.id.locationCard)
+                locationCard.isChecked = false
+            }
+        }
+    }
+    */
 }

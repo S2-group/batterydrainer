@@ -6,41 +6,6 @@
     app:startDestination="@id/sourceView">
 
     <fragment
-        android:id="@+id/stressChoices"
-        android:name="nl.vu.cs.s2group.batterybomber.StressChoices"
-        android:label="fragment_stress_choices"
-        tools:layout="@layout/fragment_stress_choices" >
-        <action
-            android:id="@+id/action_stressChoices_to_stressRunning"
-            app:destination="@id/stressRunning" />
-    </fragment>
-    <fragment
-        android:id="@+id/stressRunning"
-        android:name="nl.vu.cs.s2group.batterybomber.StressRunning"
-        android:label="fragment_stress_running"
-        tools:layout="@layout/fragment_stress_running" >
-        <action
-            android:id="@+id/action_stressRunning_to_stressChoices"
-            app:destination="@id/stressChoices" />
-        <argument
-            android:name="cpuStress"
-            app:argType="boolean" />
-        <argument
-            android:name="cameraStress"
-            app:argType="boolean" />
-        <argument
-            android:name="sensorsStress"
-            app:argType="boolean" />
-        <argument
-            android:name="locationStress"
-            app:argType="boolean" />
-        <argument android:name="networkStress"
-            app:argType="boolean" />
-        <argument
-            android:name="gpuStress"
-            app:argType="boolean" />
-    </fragment>
-    <fragment
         android:id="@+id/liveView"
         android:name="nl.vu.cs.s2group.batterybomber.LiveView"
         android:label="fragment_live_view"
