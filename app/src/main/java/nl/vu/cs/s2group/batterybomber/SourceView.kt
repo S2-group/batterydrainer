@@ -18,6 +18,7 @@ import com.google.android.gms.tasks.Task
 import com.google.android.material.card.MaterialCardView
 import nl.vu.cs.s2group.batterybomber.stressers.*
 import timber.log.Timber
+import android.net.ConnectivityManager
 
 /**
  * A simple [Fragment] subclass.
@@ -119,6 +120,16 @@ class SourceView : Fragment(R.layout.fragment_source_view) {
         }
         networkCard.setOnClickListener {
             networkCard.toggle()
+
+            // Check if the device is online
+            val cm = requireContext().getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+            val netInfo = cm.activeNetworkInfo
+            if(netInfo == null || !netInfo.isConnectedOrConnecting) {
+                networkCard.isChecked = false
+                Toast.makeText(requireContext(), "Network stress failed: Device is offline", Toast.LENGTH_LONG).show()
+                return@setOnClickListener
+            }
+
             stresserOnClick(networkStresser, networkCard)
         }
         locationCard.setOnClickListener {
