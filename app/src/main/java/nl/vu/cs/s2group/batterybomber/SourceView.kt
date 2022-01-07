@@ -1,16 +1,14 @@
 package nl.vu.cs.s2group.batterybomber
 
 import android.Manifest
+import android.os.Build
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
 import com.google.android.material.card.MaterialCardView
-import nl.vu.cs.s2group.batterybomber.stressers.CPUStresser
-import nl.vu.cs.s2group.batterybomber.stressers.CameraStresser
-import nl.vu.cs.s2group.batterybomber.stressers.GPUStresser
-import nl.vu.cs.s2group.batterybomber.stressers.SensorsStresser
+import nl.vu.cs.s2group.batterybomber.stressers.*
 import timber.log.Timber
 
 /**
@@ -23,6 +21,8 @@ class SourceView : Fragment(R.layout.fragment_source_view) {
     private lateinit var gpuStresser: GPUStresser
     private lateinit var cameraStresser: CameraStresser
     private lateinit var sensorsStresser: SensorsStresser
+
+    private lateinit var stresserList : ArrayList<Stresser>
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -38,46 +38,47 @@ class SourceView : Fragment(R.layout.fragment_source_view) {
         gpuStresser = GPUStresser(requireContext(), requireView().findViewById(R.id.myGLSurfaceView))
         cameraStresser = CameraStresser(requireContext(), childFragmentManager)
         sensorsStresser = SensorsStresser(requireContext())
+        stresserList =  arrayListOf<Stresser>(cpuStresser, gpuStresser, cameraStresser, sensorsStresser)
 
-        val requestCameraPermissionLauncher = registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted: Boolean ->
+        fun stresserPermissionLauncher(isGranted: Boolean, permissionName: String, stresser: Stresser, cardView: MaterialCardView) {
             if (isGranted) {
                 // Permission is granted. Continue the action or workflow in your app.
-                Timber.d("CAMERA permission is granted")
-                cameraStresser.start()
+                Timber.d("$permissionName permission is granted")
+                stresser.start()
             } else {
                 // Explain to the user that the feature is unavailable because the
                 // features requires a permission that the user has denied. At the
                 // same time, respect the user's decision.
-                cameraCard.isChecked = false
-                Toast.makeText(requireContext(), "CAMERA denied by the user.", Toast.LENGTH_SHORT).show()
+                cardView.isChecked = false
+                Toast.makeText(requireContext(), "$permissionName denied by the user.", Toast.LENGTH_SHORT).show()
             }
+        }
+
+        val requestCameraPermissionLauncher = registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted: Boolean ->
+            stresserPermissionLauncher(isGranted, "CAMERA", cameraStresser, cameraCard)
         }
         val requestHSRSensorsLauncher = registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted: Boolean ->
-            if (isGranted) {
-                Timber.d("HIGH_SAMPLING_RATE_SENSORS permission is granted")
-                sensorsStresser.start()
-            } else {
-                sensorsCard.isChecked = false
-                Toast.makeText(requireContext(), "HIGH_SAMPLING_RATE_SENSORS denied by the user.", Toast.LENGTH_SHORT).show()
-            }
+            stresserPermissionLauncher(isGranted, "HIGH_SAMPLING_RATE_SENSORS", sensorsStresser, sensorsCard)
         }
 
 
+        fun stresserOnClick(stresser: Stresser, cardView: MaterialCardView) {
+
+            assert(stresser.permissionsGranted())
+            when(cardView.isChecked) {
+                true  -> stresser.start()
+                false -> stresser.stop()
+            }
+        }
         cpuCard.setOnClickListener {
             cpuCard.toggle()
 
-            when(cpuCard.isChecked) {
-                true  -> cpuStresser.start()
-                false -> cpuStresser.stop()
-            }
+            stresserOnClick(cpuStresser, cpuCard)
         }
         gpuCard.setOnClickListener {
             gpuCard.toggle()
 
-            when(gpuCard.isChecked) {
-                true  -> gpuStresser.start()
-                false -> gpuStresser.stop()
-            }
+            stresserOnClick(gpuStresser, gpuCard)
         }
         cameraCard.setOnClickListener {
             cameraCard.toggle()
@@ -87,25 +88,19 @@ class SourceView : Fragment(R.layout.fragment_source_view) {
                 return@setOnClickListener
             }
 
-            assert(cameraStresser.permissionsGranted())
-            when(cameraCard.isChecked) {
-                true  -> cameraStresser.start()
-                false -> cameraStresser.stop()
-            }
+            stresserOnClick(cameraStresser, cameraCard)
         }
         sensorsCard.setOnClickListener {
             sensorsCard.toggle()
 
             if(sensorsCard.isChecked && !sensorsStresser.permissionsGranted()) {
-                requestCameraPermissionLauncher.launch(Manifest.permission.CAMERA)
+                if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                    requestHSRSensorsLauncher.launch(Manifest.permission.HIGH_SAMPLING_RATE_SENSORS)
+                }
                 return@setOnClickListener
             }
 
-            assert(sensorsStresser.permissionsGranted())
-            when(sensorsCard.isChecked) {
-                true  -> sensorsStresser.start()
-                false -> sensorsStresser.stop()
-            }
+            stresserOnClick(sensorsStresser, sensorsCard)
         }
         networkCard.setOnClickListener {
             networkCard.toggle()
@@ -122,16 +117,9 @@ class SourceView : Fragment(R.layout.fragment_source_view) {
     }
 
     private fun stopStressTest() {
-        if(cpuStresser.isRunning)
-            cpuStresser.stop()
-
-        if(gpuStresser.isRunning)
-            gpuStresser.stop()
-
-        if(cameraStresser.isRunning)
-            cameraStresser.stop()
-
-        if(sensorsStresser.isRunning)
-            sensorsStresser.stop()
+        stresserList.forEach{stresser ->
+            if(stresser.isRunning)
+                stresser.stop()
+        }
     }
 }
