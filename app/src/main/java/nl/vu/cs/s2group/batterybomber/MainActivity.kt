@@ -3,6 +3,10 @@ package nl.vu.cs.s2group.batterybomber
 import android.os.Bundle
 import timber.log.Timber
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.Toolbar
+import androidx.compose.material.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.navigation.NavController
@@ -11,6 +15,7 @@ import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
+import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.bottomnavigation.BottomNavigationView
 
 //https://stackoverflow.com/questions/56195791/android-navigation-component-how-save-fragment-state
@@ -51,6 +56,19 @@ class MainActivity : AppCompatActivity(R.layout.activity_main) {
         super.onCreate(savedInstanceState)
         if (BuildConfig.DEBUG) {
             Timber.plant(Timber.DebugTree())
+        }
+
+        // Setup top navigation
+        val topToolBar = findViewById<MaterialToolbar>(R.id.topToolBar)
+        topToolBar.setOnMenuItemClickListener { menuItem ->
+            when (menuItem.itemId) {
+                R.id.about -> {
+                    // Handle About icon press
+                    Timber.d("2")
+                    true
+                }
+                else -> false
+            }
         }
 
         // Setup the bottom navigation view with navController
