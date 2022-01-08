@@ -8,7 +8,7 @@
     tools:context=".LiveView">
 
     <TextView
-        android:id="@+id/someTextView"
+        android:id="@+id/energyInfoTextView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
@@ -18,14 +18,51 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <com.jjoe64.graphview.GraphView
-        android:id="@+id/liveGraph"
+    <LinearLayout
+        android:id="@+id/liveGraphWattsContainer"
         android:layout_width="wrap_content"
-        android:layout_height="200dip"
-        android:layout_margin="16dp"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_marginTop="16dp"
+        app:layout_constraintBottom_toTopOf="@+id/liveGraphCurrentContainer"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/energyInfoTextView" >
+
+        <com.jjoe64.graphview.GraphView
+            android:id="@+id/liveGraphWatts"
+            android:layout_width="wrap_content"
+            android:layout_height="200dip"
+            android:layout_marginStart="32dp"
+            android:layout_marginEnd="8dp" />
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:id="@+id/liveGraphCurrentContainer"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_marginTop="8dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/someTextView" />
+        app:layout_constraintTop_toBottomOf="@+id/liveGraphWattsContainer" >
+
+        <com.jjoe64.graphview.GraphView
+            android:id="@+id/liveGraphCurrent"
+            android:layout_width="wrap_content"
+            android:layout_height="200dip"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp" />
+
+        <TextView
+            android:id="@+id/secondsLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/seconds"
+            android:layout_gravity="center" />
+
+    </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

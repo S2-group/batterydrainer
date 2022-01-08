@@ -20,4 +20,5 @@
     <string name="camera">Camera</string>
     <string name="gpu">GPU</string>
     <string name="cpu">CPU</string>
+    <string name="seconds">Seconds</string>
 </resources>
