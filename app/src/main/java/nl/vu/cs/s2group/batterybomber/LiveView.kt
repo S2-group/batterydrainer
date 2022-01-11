@@ -104,7 +104,7 @@ class LiveView : Fragment(R.layout.fragment_live_view) {
 
         wattGraph.viewport.isYAxisBoundsManual = true;
         wattGraph.viewport.setMinY(0.0);
-        wattGraph.viewport.setMaxY(6.0);
+        wattGraph.viewport.setMaxY(8.0);
         wattGraph.gridLabelRenderer.isHorizontalLabelsVisible = false
         wattGraph.gridLabelRenderer.reloadStyles()
 
@@ -116,7 +116,7 @@ class LiveView : Fragment(R.layout.fragment_live_view) {
 
         currentGraph.viewport.isYAxisBoundsManual = true;
         currentGraph.viewport.setMinY(0.0);
-        currentGraph.viewport.setMaxY(2000.0);
+        currentGraph.viewport.setMaxY(2500.0);
         currentGraph.gridLabelRenderer.reloadStyles()
 
         mGraphUpdater.run()

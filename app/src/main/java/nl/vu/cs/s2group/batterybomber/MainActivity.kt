@@ -1,5 +1,6 @@
 package nl.vu.cs.s2group.batterybomber
 
+import android.content.Intent
 import android.os.Bundle
 import timber.log.Timber
 import androidx.appcompat.app.AppCompatActivity
@@ -17,10 +18,6 @@ import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.bottomnavigation.BottomNavigationView
-
-//https://stackoverflow.com/questions/56195791/android-navigation-component-how-save-fragment-state
-//https://github.com/android/architecture-components-samples/blob/master/NavigationAdvancedSample/app/src/main/java/com/example/android/navigationadvancedsample/MainActivity.kt
-//https://medium.com/@oluwabukunmi.aluko/bottom-navigation-view-with-fragments-a074bfd08711
 
 class MainActivity : AppCompatActivity(R.layout.activity_main) {
     private lateinit var navController: NavController
@@ -64,7 +61,7 @@ class MainActivity : AppCompatActivity(R.layout.activity_main) {
             when (menuItem.itemId) {
                 R.id.about -> {
                     // Handle About icon press
-                    Timber.d("2")
+                    startActivity(Intent(this@MainActivity, AboutActivity::class.java))
                     true
                 }
                 else -> false

@@ -18,16 +18,21 @@
         android:theme="@style/Theme.BatteryBomber">
         <activity
             android:name=".SplashScreenActivity"
-            android:theme = "@style/SplashScreenTheme"
-            android:exported="true">
+            android:exported="true"
+            android:theme="@style/SplashScreenTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".MainActivity"
-            android:launchMode="singleTop">
+        <activity
+            android:name=".MainActivity"
+            android:launchMode="singleTop"
+            android:exported="false">
         </activity>
+        <activity
+            android:name=".AboutActivity"
+            android:exported="false" />
     </application>
 
 </manifest>
