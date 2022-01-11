@@ -6,12 +6,13 @@ import java.io.BufferedInputStream
 import java.io.InterruptedIOException
 import java.net.ProtocolException
 import java.net.URL
+import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
 import javax.net.ssl.HttpsURLConnection
 
 class NetworkStresser(context: Context) : Stresser(context) {
-    private val networkExecutorService = Executors.newSingleThreadExecutor()
+    private lateinit var networkExecutorService : ExecutorService
 
     private val runnable = object : Runnable {
         private val SERVER_URL = URL("https://garbage-traffic.netlify.app/garbage.blob")
@@ -70,6 +71,7 @@ class NetworkStresser(context: Context) : Stresser(context) {
 
     override fun start() {
         super.start()
+        networkExecutorService = Executors.newSingleThreadExecutor()
         networkExecutorService.execute(runnable)
     }
 
