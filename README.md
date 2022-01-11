@@ -23,5 +23,5 @@ Simply clone this repository, prototype your idea, and finally create a pull req
 
 * Baseband processor - Any way to make the baseband processor and Digital Signal Processor active
 * Bluetooth - Use [bluetooth scanning](https://developer.android.com/guide/topics/connectivity/bluetooth/find-bluetooth-devices) as it is the most power consumptive operation (classic bluetooth and not BLE)
+* Screen brightness
 * Flashlight
-
