@@ -4,6 +4,8 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
 import android.view.View.TEXT_ALIGNMENT_VIEW_START
+import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
+import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import com.google.android.material.appbar.MaterialToolbar
@@ -40,16 +42,25 @@ class AboutActivity : AppCompatActivity(R.layout.activity_about) {
                 "in order to function and consumes maximum power under maximum utilization. " +
                 "With this application we demonstrate the need for energy-efficient software and sustainable software engineering " +
                 "practices in battery-powered devices.")
-            .setImage(R.drawable.logo)
+            .setImage(R.drawable.ic_logo)
             .addItem(versionElement)
             .addEmail("chalkiadakisn@gmail.com")
             .addWebsite("https://s2group.cs.vu.nl")
             .addTwitter("s2_group")
             .addGitHub("S2-group/batterybomber")
             .create()
+
+        //align the text
         aboutPage.layoutParams = LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT)
         aboutPage.findViewById<TextView>(mehdi.sakout.aboutpage.R.id.description).textAlignment = TEXT_ALIGNMENT_VIEW_START
 
+        //remove excessive margins from the logo
+        val logoImageView = aboutPage.findViewById<ImageView>(mehdi.sakout.aboutpage.R.id.image)
+        val logoLayout = LinearLayout.LayoutParams(WRAP_CONTENT, WRAP_CONTENT)
+        logoLayout.setMargins(0,0,0,0)
+        logoImageView.layoutParams = logoLayout
+
+        //show the "About" view
         val replaceableView = findViewById<View>(R.id.customAboutView)
         val index = layout.indexOfChild(replaceableView);
         layout.removeView(replaceableView)
