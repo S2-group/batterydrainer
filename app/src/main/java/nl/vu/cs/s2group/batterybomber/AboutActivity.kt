@@ -44,10 +44,9 @@ class AboutActivity : AppCompatActivity(R.layout.activity_about) {
                 "practices in battery-powered devices.")
             .setImage(R.drawable.ic_logo)
             .addItem(versionElement)
-            .addEmail("chalkiadakisn@gmail.com")
-            .addWebsite("https://s2group.cs.vu.nl")
-            .addTwitter("s2_group")
-            .addGitHub("S2-group/batterybomber")
+            .addWebsite("https://s2group.cs.vu.nl", "s2group.cs.vu.nl")
+            .addTwitter("s2_group", "twitter.com/s2_group")
+            .addGitHub("S2-group", "github.com/S2-group")
             .create()
 
         //align the text
