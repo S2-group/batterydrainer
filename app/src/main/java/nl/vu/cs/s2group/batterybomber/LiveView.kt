@@ -1,25 +1,25 @@
 package nl.vu.cs.s2group.batterybomber
 
-import android.view.View
-import android.widget.TextView
-import androidx.fragment.app.Fragment
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Context.BATTERY_SERVICE
 import android.content.Context.POWER_SERVICE
 import android.content.Intent
 import android.content.IntentFilter
+import android.graphics.Canvas
 import android.graphics.Color
+import android.graphics.Paint
 import android.os.*
+import android.util.AttributeSet
+import android.view.View
+import android.widget.TextView
+import androidx.fragment.app.Fragment
 import com.jjoe64.graphview.GraphView
 import com.jjoe64.graphview.series.DataPoint
 import com.jjoe64.graphview.series.LineGraphSeries
 import timber.log.Timber
 import java.lang.StrictMath.abs
 import java.util.*
-import android.os.PowerManager
-import com.jjoe64.graphview.DefaultLabelFormatter
-import com.jjoe64.graphview.LegendRenderer
 
 
 /**
@@ -76,8 +76,8 @@ class LiveView : Fragment(R.layout.fragment_live_view) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val wattGraph    = view.findViewById(R.id.liveGraphWatts    ) as GraphView
-        val currentGraph = view.findViewById(R.id.liveGraphCurrent  ) as GraphView
+        val wattGraph    = view.findViewById(R.id.liveGraphWatts    ) as CustomGraphView
+        val currentGraph = view.findViewById(R.id.liveGraphCurrent  ) as CustomGraphView
         textView         = view.findViewById(R.id.energyInfoTextView) as TextView
 
         batteryManager = requireContext().getSystemService(BATTERY_SERVICE) as BatteryManager
@@ -98,6 +98,7 @@ class LiveView : Fragment(R.layout.fragment_live_view) {
 
         wattGraph.addSeries(wattSeries)
         wattGraph.title = "Watt consumption (W)"
+        wattGraph.isTitleBold = true
         wattGraph.viewport.isXAxisBoundsManual = true;
         wattGraph.viewport.setMinX(0.0);
         wattGraph.viewport.setMaxX(timeLength.toDouble());
@@ -110,6 +111,7 @@ class LiveView : Fragment(R.layout.fragment_live_view) {
 
         currentGraph.addSeries(currentSeries)
         currentGraph.title = "Current discharge (mA)"
+        currentGraph.isTitleBold = true
         currentGraph.viewport.isXAxisBoundsManual = true;
         currentGraph.viewport.setMinX(0.0);
         currentGraph.viewport.setMaxX(timeLength.toDouble());
@@ -127,6 +129,38 @@ class LiveView : Fragment(R.layout.fragment_live_view) {
         requireContext().unregisterReceiver(broadcastReceiver)
         mHandler.removeCallbacks(mGraphUpdater);
         Timber.d("LiveView destroyed!")
+    }
+}
+
+class CustomGraphView : GraphView {
+    var isTitleBold: Boolean = false
+
+    private val mPaintTitle = Paint()
+
+    constructor(context: Context): super(context)
+    constructor(context: Context, attrs: AttributeSet): super(context, attrs)
+    constructor(context: Context, attrs: AttributeSet, defStyle: Int) : super(context, attrs, defStyle)
+
+    override fun drawTitle(canvas : Canvas) {
+        /* FIXME: for some reason we have to invoke super.drawTitle() in order for the text to appear
+         * in the correct position on the y-axis, despite that the code is the same. Is this some Java/Kotlin integration problem?
+         * To avoid ugly rendering, we make the parent rendering invisible
+         */
+        val realTitleColor = titleColor
+        super.setTitleColor(Color.TRANSPARENT)
+        super.drawTitle(canvas)
+
+        if (title != null && title.length > 0) {
+            mPaintTitle.color = realTitleColor
+            mPaintTitle.textSize = titleTextSize
+            mPaintTitle.textAlign = Paint.Align.CENTER
+            mPaintTitle.isFakeBoldText = isTitleBold
+
+            val x = canvas.width.toFloat() / 2
+            val y = mPaintTitle.textSize
+            canvas.drawText(title, x, y, mPaintTitle)
+        }
+        super.setTitleColor(realTitleColor)
     }
 }
 
