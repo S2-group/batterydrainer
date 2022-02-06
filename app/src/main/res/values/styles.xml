@@ -6,4 +6,11 @@
         <item name="android:windowBackground">@drawable/splash</item>
         <item name="colorPrimaryDark">@android:color/white</item>
     </style>
+
+    <style name="horizontal_separator">
+        <item name="android:layout_height">@dimen/horizontal_separator_height</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:background">#999999</item>
+        <item name="android:padding">0dp</item>
+    </style>
 </resources>

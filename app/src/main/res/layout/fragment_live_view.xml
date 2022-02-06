@@ -25,42 +25,71 @@
             android:layout_height="wrap_content"
             android:layout_gravity="fill"
             android:layout_columnWeight="1"
-            android:padding="3dp"
+            android:paddingTop="0dp"
+            android:paddingStart="0dp"
+            android:paddingBottom="3dp"
+            android:paddingEnd="6dp"
             android:text="@string/battery_status" />
 
         <TextView
             android:id="@+id/currentNowTextView"
-            android:padding="3dp" />
+            android:paddingTop="0dp"
+            android:paddingStart="0dp"
+            android:paddingBottom="3dp"
+            android:paddingEnd="3dp" />
 
         <TextView
             android:id="@+id/voltageTextView"
-            android:padding="3dp" />
+            android:paddingTop="0dp"
+            android:paddingStart="0dp"
+            android:paddingBottom="3dp"
+            android:paddingEnd="3dp" />
 
         <TextView
             android:id="@+id/wattsTextView"
-            android:padding="3dp" />
+            android:paddingTop="0dp"
+            android:paddingStart="0dp"
+            android:paddingBottom="3dp"
+            android:paddingEnd="3dp" />
 
         <TextView
             android:padding="3dp"
-            android:text="@string/remaining_battery" />
+            android:text="@string/remaining_battery"
+            android:paddingTop="0dp"
+            android:paddingStart="0dp"
+            android:paddingBottom="0dp"
+            android:paddingEnd="6dp" />
 
         <TextView
             android:id="@+id/remainingBatteryTextView"
             android:layout_columnSpan="2"
-            android:padding="3dp" />
+            android:paddingTop="0dp"
+            android:paddingStart="0dp"
+            android:paddingBottom="0dp"
+            android:paddingEnd="3dp" />
 
     </GridLayout>
+
+    <nl.vu.cs.s2group.batterybomber.HorizontalSeparator
+        style="@style/horizontal_separator"
+        android:id="@+id/stats_separator"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="16dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/energyInfoTable" />
 
     <LinearLayout
         android:id="@+id/liveGraphWattsContainer"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="8dp"
         app:layout_constraintBottom_toTopOf="@+id/liveGraphCurrentContainer"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/energyInfoTable" >
+        app:layout_constraintTop_toBottomOf="@+id/stats_separator" >
 
         <nl.vu.cs.s2group.batterybomber.CustomGraphView
             android:id="@+id/liveGraphWatts"
