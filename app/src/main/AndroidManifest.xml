@@ -19,6 +19,7 @@
         android:theme="@style/Theme.BatteryBomber">
         <activity
             android:name=".SplashScreenActivity"
+            android:screenOrientation="userPortrait"
             android:exported="true"
             android:theme="@style/SplashScreenTheme">
             <intent-filter>
@@ -28,11 +29,13 @@
         </activity>
         <activity
             android:name=".MainActivity"
+            android:screenOrientation="userPortrait"
             android:launchMode="singleTop"
             android:exported="false">
         </activity>
         <activity
             android:name=".AboutActivity"
+            android:screenOrientation="userPortrait"
             android:exported="false" />
     </application>
 
