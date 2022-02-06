@@ -31,10 +31,12 @@ class LocationStresser(context: Context) : Stresser(context) {
     }
 
     override fun permissionsGranted(): Boolean {
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.S)
-            TODO("implement me") //TODO: On Android 12 (API level 31) or higher we must request both FINE and COARSE grained location
+        return if(Build.VERSION.SDK_INT < Build.VERSION_CODES.S)
+            (ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED)
         else
-            return (ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED)
+            arrayOf(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION).all { permission ->
+                ContextCompat.checkSelfPermission(context, permission) == PackageManager.PERMISSION_GRANTED
+            }
     }
 
     override fun start() {

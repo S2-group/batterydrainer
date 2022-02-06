@@ -19,6 +19,7 @@ import com.google.android.material.card.MaterialCardView
 import nl.vu.cs.s2group.batterybomber.stressers.*
 import timber.log.Timber
 import android.net.ConnectivityManager
+import androidx.activity.result.ActivityResultLauncher
 
 /**
  * A simple [Fragment] subclass.
@@ -75,11 +76,28 @@ class SourceView : Fragment(R.layout.fragment_source_view) {
         val requestHSRSensorsLauncher = registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted: Boolean ->
             stresserPermissionLauncher(isGranted, "HIGH_SAMPLING_RATE_SENSORS", sensorsStresser, sensorsCard)
         }
-        val requestLocationLauncher = registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted: Boolean ->
-            if (isGranted)
-                requestHighAccuracyLocation()
-            stresserPermissionLauncher(isGranted, "ACCESS_FINE_LOCATION", locationStresser, locationCard)
-        }
+
+        val requestLocationLauncher = if(Build.VERSION.SDK_INT < Build.VERSION_CODES.S)
+            registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted: Boolean ->
+                if (isGranted)
+                    requestHighAccuracyLocation()
+                stresserPermissionLauncher(isGranted, "ACCESS_FINE_LOCATION", locationStresser, locationCard)
+            }
+        else
+            registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { permissions ->
+                when {
+                    permissions.getOrDefault(Manifest.permission.ACCESS_FINE_LOCATION, false) -> {
+                        requestHighAccuracyLocation()
+                        stresserPermissionLauncher(true, "ACCESS_FINE_LOCATION", locationStresser, locationCard)
+                    }
+                    permissions.getOrDefault(Manifest.permission.ACCESS_COARSE_LOCATION, false) -> {
+                        stresserPermissionLauncher(false, "ACCESS_FINE_LOCATION", locationStresser, locationCard)
+                    }
+                    else -> {
+                        stresserPermissionLauncher(false, "LOCATION", locationStresser, locationCard)
+                    }
+                }
+            }
 
         fun stresserOnClick(stresser: Stresser, cardView: MaterialCardView) {
             assert(stresser.permissionsGranted())
@@ -137,7 +155,10 @@ class SourceView : Fragment(R.layout.fragment_source_view) {
 
             if(locationCard.isChecked) {
                 if(!locationStresser.permissionsGranted()) {
-                    requestLocationLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION) //First requests the location permission and then requests the high accuracy
+                    if(Build.VERSION.SDK_INT < Build.VERSION_CODES.S)
+                        (requestLocationLauncher as ActivityResultLauncher<String>).launch(Manifest.permission.ACCESS_FINE_LOCATION) //First requests the location permission and then requests the high accuracy
+                    else
+                        (requestLocationLauncher as  ActivityResultLauncher<Array<String>>).launch(arrayOf(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION))
                     return@setOnClickListener
                 }
                 requestHighAccuracyLocation()
@@ -160,7 +181,7 @@ class SourceView : Fragment(R.layout.fragment_source_view) {
         }
     }
 
-    /** Request user to change "Location Mode" in settings to "High Accuracy" */
+    /** Request user to change "Location Mode" in settings to "High Accuracy", i.e. use Google's Location Accuracy service which is much more energy consuming */
     private fun requestHighAccuracyLocation() {
         //Request user to change "Location Mode" in settings to "High Accuracy"
         val mLocationRequest = LocationRequest.create().apply {
