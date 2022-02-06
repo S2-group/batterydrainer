@@ -7,16 +7,49 @@
     android:layout_height="wrap_content"
     tools:context=".LiveView">
 
-    <TextView
-        android:id="@+id/energyInfoTextView"
+    <GridLayout
+        android:id="@+id/energyInfoTable"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
         android:layout_marginEnd="16dp"
+        android:rowCount="2"
+        android:columnCount="4"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="fill"
+            android:layout_columnWeight="1"
+            android:padding="3dp"
+            android:text="@string/battery_status" />
+
+        <TextView
+            android:id="@+id/currentNowTextView"
+            android:padding="3dp" />
+
+        <TextView
+            android:id="@+id/voltageTextView"
+            android:padding="3dp" />
+
+        <TextView
+            android:id="@+id/wattsTextView"
+            android:padding="3dp" />
+
+        <TextView
+            android:padding="3dp"
+            android:text="@string/remaining_battery" />
+
+        <TextView
+            android:id="@+id/remainingBatteryTextView"
+            android:layout_columnSpan="2"
+            android:padding="3dp" />
+
+    </GridLayout>
 
     <LinearLayout
         android:id="@+id/liveGraphWattsContainer"
@@ -27,13 +60,13 @@
         app:layout_constraintBottom_toTopOf="@+id/liveGraphCurrentContainer"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/energyInfoTextView" >
+        app:layout_constraintTop_toBottomOf="@+id/energyInfoTable" >
 
         <nl.vu.cs.s2group.batterybomber.CustomGraphView
             android:id="@+id/liveGraphWatts"
             android:layout_width="wrap_content"
             android:layout_height="200dip"
-            android:layout_marginStart="32dp"
+            android:layout_marginStart="35dp"
             android:layout_marginEnd="8dp" />
     </LinearLayout>
 

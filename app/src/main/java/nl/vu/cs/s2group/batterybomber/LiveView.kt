@@ -35,11 +35,15 @@ class LiveView : Fragment(R.layout.fragment_live_view) {
     private val timeLength = 120 //seconds
     private var graphNextXValue = 0.0
     private var lastKnownVoltage : Int = 0    // milliVolts
-    private var lastknownLevel : Double = 0.0 // percentage
+    private var lastKnownLevel : Double = 0.0 // percentage
 
     private val wattSeries   : LineGraphSeries<DataPoint> = LineGraphSeries()
     private val currentSeries: LineGraphSeries<DataPoint> = LineGraphSeries()
-    private lateinit var textView: TextView
+
+    private lateinit var currentNowTextView         : TextView
+    private lateinit var voltageTextView            : TextView
+    private lateinit var wattsTextView              : TextView
+    private lateinit var remainingBatteryTextView   : TextView
 
     private val mGraphUpdater = object : Runnable {
         private val mInterval = 1000 // milliseconds
@@ -57,13 +61,14 @@ class LiveView : Fragment(R.layout.fragment_live_view) {
             /*
              * currentAverage always reports 0
              * energy         always reports 0
-             * capacityPercentage == lastknownLevel
+             * capacityPercentage == lastKnownLevel
              * Usable metrics: currentNow, watts, capacity
              */
 
-            textView.text = "%d mA, %d mV, %.2f W\n%d%%, %d mAH remaining".format(
-                currentNow/1000, lastKnownVoltage, watts, lastknownLevel.toInt(), capacity/1000
-            )
+            currentNowTextView.text         = "%d mA".format(currentNow/1000)
+            voltageTextView.text            = "%d mV".format(lastKnownVoltage)
+            wattsTextView.text              = "%.2f W".format(watts)
+            remainingBatteryTextView.text   = "%d%% (%d mAH)".format(lastKnownLevel.toInt(), capacity/1000)
 
             wattSeries.appendData(DataPoint(graphNextXValue, watts), graphNextXValue > timeLength, maxDataPoints)
             currentSeries.appendData(DataPoint(graphNextXValue, if(currentNow > 0) 0.0 else (abs(currentNow)/1000).toDouble()), graphNextXValue > timeLength, maxDataPoints)
@@ -78,7 +83,10 @@ class LiveView : Fragment(R.layout.fragment_live_view) {
 
         val wattGraph    = view.findViewById(R.id.liveGraphWatts    ) as CustomGraphView
         val currentGraph = view.findViewById(R.id.liveGraphCurrent  ) as CustomGraphView
-        textView         = view.findViewById(R.id.energyInfoTextView) as TextView
+        currentNowTextView          = view.findViewById(R.id.currentNowTextView         ) as TextView
+        voltageTextView             = view.findViewById(R.id.voltageTextView            ) as TextView
+        wattsTextView               = view.findViewById(R.id.wattsTextView              ) as TextView
+        remainingBatteryTextView    = view.findViewById(R.id.remainingBatteryTextView   ) as TextView
 
         batteryManager = requireContext().getSystemService(BATTERY_SERVICE) as BatteryManager
         powerManager   = requireContext().getSystemService(POWER_SERVICE  ) as PowerManager
@@ -87,7 +95,7 @@ class LiveView : Fragment(R.layout.fragment_live_view) {
 
             val level = intent.getIntExtra(BatteryManager.EXTRA_LEVEL, -1)
             val scale = intent.getIntExtra(BatteryManager.EXTRA_SCALE, -1)
-            lastknownLevel = (level * 100).toDouble() / scale
+            lastKnownLevel = (level * 100).toDouble() / scale
         }
 
         val filter = IntentFilter().apply {

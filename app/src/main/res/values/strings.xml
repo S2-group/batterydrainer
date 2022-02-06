@@ -22,4 +22,6 @@
     <string name="cpu">CPU</string>
     <string name="seconds">Seconds</string>
     <string name="about">About</string>
+    <string name="battery_status">Battery Status</string>
+    <string name="remaining_battery">Remaining Battery</string>
 </resources>
