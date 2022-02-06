@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.text.Html
 import android.text.method.LinkMovementMethod
+import android.view.Gravity
 import android.view.View
 import android.view.View.TEXT_ALIGNMENT_VIEW_START
 import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
@@ -34,6 +35,10 @@ class AboutActivity : AppCompatActivity(R.layout.activity_about) {
         val versionElement = Element()
         versionElement.title = "Version 0.1"
 
+        val contributionsHeader = Element()
+        contributionsHeader.title = "Project Contributions"
+        contributionsHeader.gravity = Gravity.CENTER_HORIZONTAL
+
         //.addPlayStore("com.ideashower.readitlater.pro")
         //.addGroup("Connect with us")
         aboutPage = AboutPage(this)
@@ -56,6 +61,9 @@ class AboutActivity : AppCompatActivity(R.layout.activity_about) {
             .addTwitter("s2_group", "twitter.com/s2_group")
             .addGitHub("S2-group", "github.com/S2-group")
             .addItem(versionElement)
+            .addItem(contributionsHeader)
+            .addWebsite("https://www.linkedin.com/in/chalkn", "Nikolaos Chalkiadakis")
+            .addWebsite("https://www.ivanomalavolta.com", "Ivano Malavolta")
             .create()
         aboutPage.layoutParams = LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT)
 
