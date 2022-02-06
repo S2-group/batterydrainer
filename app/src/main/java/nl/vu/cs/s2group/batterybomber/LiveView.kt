@@ -65,10 +65,10 @@ class LiveView : Fragment(R.layout.fragment_live_view) {
              * Usable metrics: currentNow, watts, capacity
              */
 
-            currentNowTextView.text         = "%d mA".format(currentNow/1000)
-            voltageTextView.text            = "%d mV".format(lastKnownVoltage)
-            wattsTextView.text              = "%.2f W".format(watts)
-            remainingBatteryTextView.text   = "%d%% (%d mAH)".format(lastKnownLevel.toInt(), capacity/1000)
+            currentNowTextView.text         = "%4d mA".format(currentNow/1000)
+            voltageTextView.text            = "%4d mV".format(lastKnownVoltage)
+            wattsTextView.text              = "%2.2f W".format(watts)
+            remainingBatteryTextView.text   = "%2d%% (%4d mAH)".format(lastKnownLevel.toInt(), capacity/1000)
 
             wattSeries.appendData(DataPoint(graphNextXValue, watts), graphNextXValue > timeLength, maxDataPoints)
             currentSeries.appendData(DataPoint(graphNextXValue, if(currentNow > 0) 0.0 else (abs(currentNow)/1000).toDouble()), graphNextXValue > timeLength, maxDataPoints)
