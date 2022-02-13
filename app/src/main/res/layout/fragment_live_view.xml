@@ -14,7 +14,7 @@
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
         android:layout_marginEnd="16dp"
-        android:rowCount="2"
+        android:rowCount="3"
         android:columnCount="4"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -25,6 +25,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="fill"
             android:layout_columnWeight="1"
+            android:textStyle="bold"
             android:paddingTop="0dp"
             android:paddingStart="0dp"
             android:paddingBottom="3dp"
@@ -55,6 +56,7 @@
         <TextView
             android:padding="3dp"
             android:text="@string/remaining_battery"
+            android:textStyle="bold"
             android:paddingTop="0dp"
             android:paddingStart="0dp"
             android:paddingBottom="0dp"
@@ -62,7 +64,24 @@
 
         <TextView
             android:id="@+id/remainingBatteryTextView"
-            android:layout_columnSpan="2"
+            android:layout_columnSpan="3"
+            android:paddingTop="0dp"
+            android:paddingStart="0dp"
+            android:paddingBottom="0dp"
+            android:paddingEnd="3dp" />
+
+        <TextView
+            android:padding="3dp"
+            android:text="@string/estimated_lifetime"
+            android:textStyle="bold"
+            android:paddingTop="0dp"
+            android:paddingStart="0dp"
+            android:paddingBottom="0dp"
+            android:paddingEnd="6dp" />
+
+        <TextView
+            android:id="@+id/estimatedLifeTimeTextView"
+            android:layout_columnSpan="3"
             android:paddingTop="0dp"
             android:paddingStart="0dp"
             android:paddingBottom="0dp"

@@ -20,6 +20,7 @@ import com.jjoe64.graphview.series.LineGraphSeries
 import timber.log.Timber
 import java.lang.StrictMath.abs
 import java.util.*
+import kotlin.math.floor
 
 
 /**
@@ -44,6 +45,7 @@ class LiveView : Fragment(R.layout.fragment_live_view) {
     private lateinit var voltageTextView            : TextView
     private lateinit var wattsTextView              : TextView
     private lateinit var remainingBatteryTextView   : TextView
+    private lateinit var estimatedLifeTimeTextView  : TextView
 
     private val mGraphUpdater = object : Runnable {
         private val mInterval = 1000 // milliseconds
@@ -70,6 +72,11 @@ class LiveView : Fragment(R.layout.fragment_live_view) {
             wattsTextView.text              = "%2.2f W".format(watts)
             remainingBatteryTextView.text   = "%2d%% (%4d mAH)".format(lastKnownLevel.toInt(), capacity/1000)
 
+            val estimatedLifeTime = abs((capacity.toDouble()/1000)/(currentNow.toDouble()/1000))
+            val hours = floor(estimatedLifeTime)
+            val minutes = ((estimatedLifeTime - hours)*60)
+            estimatedLifeTimeTextView.text  = if(currentNow > 0) "Charging" else "%2d hours and %2d minutes".format(hours.toInt(), minutes.toInt())
+
             wattSeries.appendData(DataPoint(graphNextXValue, watts), graphNextXValue > timeLength, maxDataPoints)
             currentSeries.appendData(DataPoint(graphNextXValue, if(currentNow > 0) 0.0 else (abs(currentNow)/1000).toDouble()), graphNextXValue > timeLength, maxDataPoints)
             graphNextXValue++
@@ -87,6 +94,7 @@ class LiveView : Fragment(R.layout.fragment_live_view) {
         voltageTextView             = view.findViewById(R.id.voltageTextView            ) as TextView
         wattsTextView               = view.findViewById(R.id.wattsTextView              ) as TextView
         remainingBatteryTextView    = view.findViewById(R.id.remainingBatteryTextView   ) as TextView
+        estimatedLifeTimeTextView   = view.findViewById(R.id.estimatedLifeTimeTextView  ) as TextView
 
         batteryManager = requireContext().getSystemService(BATTERY_SERVICE) as BatteryManager
         powerManager   = requireContext().getSystemService(POWER_SERVICE  ) as PowerManager
