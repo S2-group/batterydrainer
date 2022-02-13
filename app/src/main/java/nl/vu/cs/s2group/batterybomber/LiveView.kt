@@ -52,7 +52,12 @@ class LiveView : Fragment(R.layout.fragment_live_view) {
         private val maxDataPoints = ((1000/mInterval.toDouble()) * 60 * 5).toInt() // Keep a record of 5 minutes
 
         override fun run() {
-            val currentNow = batteryManager.getIntProperty(BatteryManager.BATTERY_PROPERTY_CURRENT_NOW) //Instantaneous battery current in microamperes
+            var currentNow = batteryManager.getIntProperty(BatteryManager.BATTERY_PROPERTY_CURRENT_NOW) //Instantaneous battery current in microamperes
+            if(Build.MANUFACTURER.equals("Xiaomi", true)) {
+                if(Build.MODEL.equals("M2012K11AG", true))  //this model reports with inverted sign
+                    currentNow = -currentNow
+            }
+
             val currentAverage = batteryManager.getIntProperty(BatteryManager.BATTERY_PROPERTY_CURRENT_AVERAGE) //Average battery current in microamperes
             val watts = if(currentNow > 0)  0.0 else (lastKnownVoltage.toDouble() / 1000) * (abs(currentNow).toDouble()/1000/1000) //Only negative current means discharging
 
@@ -122,7 +127,7 @@ class LiveView : Fragment(R.layout.fragment_live_view) {
 
         wattGraph.viewport.isYAxisBoundsManual = true;
         wattGraph.viewport.setMinY(0.0);
-        wattGraph.viewport.setMaxY(8.0);
+        wattGraph.viewport.setMaxY(10.0);
         wattGraph.gridLabelRenderer.isHorizontalLabelsVisible = false
         wattGraph.gridLabelRenderer.reloadStyles()
 
@@ -136,7 +141,7 @@ class LiveView : Fragment(R.layout.fragment_live_view) {
 
         currentGraph.viewport.isYAxisBoundsManual = true;
         currentGraph.viewport.setMinY(0.0);
-        currentGraph.viewport.setMaxY(2500.0);
+        currentGraph.viewport.setMaxY(3000.0);
         currentGraph.gridLabelRenderer.reloadStyles()
 
         mGraphUpdater.run()
