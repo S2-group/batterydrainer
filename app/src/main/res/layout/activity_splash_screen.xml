@@ -6,4 +6,7 @@
     android:layout_height="match_parent"
     tools:context=".SplashScreenActivity">
 
+    <!-- Intentionally left blank -->
+    <!-- Intentionally used styles instead of ImageView -->
+
 </androidx.constraintlayout.widget.ConstraintLayout>
