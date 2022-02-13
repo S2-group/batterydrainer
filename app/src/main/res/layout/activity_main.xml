@@ -1,69 +1,88 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
-    <com.google.android.material.appbar.AppBarLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:liftOnScroll="true">
-
-        <com.google.android.material.appbar.MaterialToolbar
-            android:id="@+id/topToolBar"
-            android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            app:title="BatteryBomber"
-            app:menu="@menu/main_menu"
-            style="@style/Widget.MaterialComponents.Toolbar.Primary" />
-        <!--            app:navigationIcon="@drawable/ic_baseline_menu_24"-->
-
-    </com.google.android.material.appbar.AppBarLayout>
-
-    <androidx.core.widget.NestedScrollView
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+        android:orientation="vertical">
 
-        <LinearLayout
+        <androidx.coordinatorlayout.widget.CoordinatorLayout
+            android:id="@+id/mainCoordinator"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="vertical"
-            android:gravity="top" >
+            android:layout_above="@+id/mainBottomNavViewContainer" >
 
-            <androidx.fragment.app.FragmentContainerView
-                android:id="@+id/nav_fragment"
-                android:name="androidx.navigation.fragment.NavHostFragment"
+            <com.google.android.material.appbar.AppBarLayout
+                android:id="@+id/mainAppBar"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:navGraph="@navigation/navigation"/>
-                <!--tools:layout="@layout/fragment_live_view"-->
+                app:liftOnScroll="true">
 
+                <com.google.android.material.appbar.MaterialToolbar
+                    android:id="@+id/topToolBar"
+                    android:layout_width="match_parent"
+                    android:layout_height="?attr/actionBarSize"
+                    app:title="BatteryBomber"
+                    app:menu="@menu/main_menu"
+                    style="@style/Widget.MaterialComponents.Toolbar.Primary" />
+                    <!--            app:navigationIcon="@drawable/ic_baseline_menu_24"-->
+
+            </com.google.android.material.appbar.AppBarLayout>
+
+            <androidx.core.widget.NestedScrollView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical"
+                    android:gravity="top" >
+
+                    <androidx.fragment.app.FragmentContainerView
+                        android:id="@+id/nav_fragment"
+                        android:name="androidx.navigation.fragment.NavHostFragment"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        app:navGraph="@navigation/navigation"/>
+                        <!--tools:layout="@layout/fragment_live_view"-->
+
+                </LinearLayout>
+
+            </androidx.core.widget.NestedScrollView>
+
+        </androidx.coordinatorlayout.widget.CoordinatorLayout>
+
+        <!-- BottomNavigationView -->
+        <LinearLayout
+            android:id="@+id/mainBottomNavViewContainer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginTop="8dp"
+            android:layout_alignParentBottom="true" >
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="8dp"
+                android:background="@drawable/shadow"/>
+
+            <com.google.android.material.bottomnavigation.BottomNavigationView
+                android:id="@+id/bottom_navigation_view"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="?android:attr/windowBackground"
+                app:itemIconTint="@drawable/nav_item_color_state"
+                app:itemTextColor="@drawable/nav_item_color_state"
+                app:menu="@menu/bottom_nav" />
         </LinearLayout>
 
-    </androidx.core.widget.NestedScrollView>
+    </RelativeLayout>
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:layout_gravity="bottom">
-
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="8dp"
-        android:background="@drawable/shadow"/>
-    <com.google.android.material.bottomnavigation.BottomNavigationView
-        android:id="@+id/bottom_navigation_view"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="?android:attr/windowBackground"
-        app:itemIconTint="@drawable/nav_item_color_state"
-        app:itemTextColor="@drawable/nav_item_color_state"
-        app:menu="@menu/bottom_nav" />
-
-    </LinearLayout>
-
-</androidx.coordinatorlayout.widget.CoordinatorLayout>
+</FrameLayout>
