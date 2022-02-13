@@ -75,7 +75,7 @@ class LiveView : Fragment(R.layout.fragment_live_view) {
             val estimatedLifeTime = abs((capacity.toDouble()/1000)/(currentNow.toDouble()/1000))
             val hours = floor(estimatedLifeTime)
             val minutes = ((estimatedLifeTime - hours)*60)
-            estimatedLifeTimeTextView.text  = if(currentNow > 0) "Charging" else "%2d hours and %2d minutes".format(hours.toInt(), minutes.toInt())
+            estimatedLifeTimeTextView.text  = if(currentNow > 0) "NA (Charging)" else "%2d hours and %2d minutes".format(hours.toInt(), minutes.toInt())
 
             wattSeries.appendData(DataPoint(graphNextXValue, watts), graphNextXValue > timeLength, maxDataPoints)
             currentSeries.appendData(DataPoint(graphNextXValue, if(currentNow > 0) 0.0 else (abs(currentNow)/1000).toDouble()), graphNextXValue > timeLength, maxDataPoints)
@@ -115,6 +115,7 @@ class LiveView : Fragment(R.layout.fragment_live_view) {
         wattGraph.addSeries(wattSeries)
         wattGraph.title = "Watt consumption (W)"
         wattGraph.isTitleBold = true
+        wattGraph.titleTextSize = Utils.spToPx(16.0f, requireContext()).toFloat()
         wattGraph.viewport.isXAxisBoundsManual = true;
         wattGraph.viewport.setMinX(0.0);
         wattGraph.viewport.setMaxX(timeLength.toDouble());
@@ -128,6 +129,7 @@ class LiveView : Fragment(R.layout.fragment_live_view) {
         currentGraph.addSeries(currentSeries)
         currentGraph.title = "Current discharge (mA)"
         currentGraph.isTitleBold = true
+        currentGraph.titleTextSize = Utils.spToPx(16.0f, requireContext()).toFloat()
         currentGraph.viewport.isXAxisBoundsManual = true;
         currentGraph.viewport.setMinX(0.0);
         currentGraph.viewport.setMaxX(timeLength.toDouble());

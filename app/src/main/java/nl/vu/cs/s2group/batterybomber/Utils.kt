@@ -1,8 +1,14 @@
 package nl.vu.cs.s2group.batterybomber
 
+import android.content.Context
 import android.os.BatteryManager
+import android.util.TypedValue
 
 object Utils {
+    fun spToPx(sp: Float, context: Context): Int {
+        return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, sp, context.resources.displayMetrics).toInt()
+    }
+
     object Constants {
         val PI_50 : Double = 3.1415926535897932384626433832795028841971
     }
