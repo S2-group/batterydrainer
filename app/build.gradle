@@ -124,4 +124,7 @@ dependencies {
 
     // Info/About page
     implementation 'io.github.medyo:android-about-page:2.0.0'
+
+    //Splash screen for android 12+
+    implementation 'androidx.core:core-splashscreen:1.0.0-beta01'
 }

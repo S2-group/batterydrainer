@@ -7,9 +7,7 @@
         android:drawable="@drawable/ic_logo"
         android:gravity="center" />
     <item
-        android:width="300dp"
-        android:height="89dp"
         android:bottom="44dp"
-        android:drawable="@drawable/vu_logo2"
+        android:drawable="@drawable/vu_logo2_resized"
         android:gravity="center|bottom" />
 </layer-list>

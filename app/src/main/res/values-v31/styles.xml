@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- The launcher theme. It sets the main window background to the launch_screen drawable -->
+    <style name="SplashScreenTheme" parent="Theme.SplashScreen">
+        <item name="android:windowSplashScreenBackground">@android:color/white</item>
+        <item name="android:windowSplashscreenContent">@drawable/ic_logo</item>
+        <item name="android:windowSplashScreenBrandingImage">@drawable/vu_logo2_resized</item>
+    </style>
+
+    <style name="horizontal_separator">
+        <item name="android:layout_height">@dimen/horizontal_separator_height</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:background">#999999</item>
+        <item name="android:padding">0dp</item>
+    </style>
+</resources>
