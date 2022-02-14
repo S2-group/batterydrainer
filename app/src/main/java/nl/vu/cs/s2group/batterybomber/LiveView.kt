@@ -59,7 +59,7 @@ class LiveView : Fragment(R.layout.fragment_live_view) {
             }
 
             val currentAverage = batteryManager.getIntProperty(BatteryManager.BATTERY_PROPERTY_CURRENT_AVERAGE) //Average battery current in microamperes
-            val watts = if(currentNow > 0)  0.0 else (lastKnownVoltage.toDouble() / 1000) * (abs(currentNow).toDouble()/1000/1000) //Only negative current means discharging
+            val watts = if(currentNow >= 0)  0.0 else (lastKnownVoltage.toDouble() / 1000) * (abs(currentNow).toDouble()/1000/1000) //Only negative current means discharging
 
             val energy   = batteryManager.getIntProperty(BatteryManager.BATTERY_PROPERTY_ENERGY_COUNTER) //Remaining energy in nanowatt-hours
             val capacity = batteryManager.getIntProperty(BatteryManager.BATTERY_PROPERTY_CHARGE_COUNTER) //Remaining battery capacity in microampere-hours
@@ -80,10 +80,10 @@ class LiveView : Fragment(R.layout.fragment_live_view) {
             val estimatedLifeTime = abs((capacity.toDouble()/1000)/(currentNow.toDouble()/1000))
             val hours = floor(estimatedLifeTime)
             val minutes = ((estimatedLifeTime - hours)*60)
-            estimatedLifeTimeTextView.text  = if(currentNow > 0) "NA (Charging)" else "%2d hours and %2d minutes".format(hours.toInt(), minutes.toInt())
+            estimatedLifeTimeTextView.text  = if(currentNow >= 0) "NA (Charging)" else "%2d hours and %2d minutes".format(hours.toInt(), minutes.toInt())
 
             wattSeries.appendData(DataPoint(graphNextXValue, watts), graphNextXValue > timeLength, maxDataPoints)
-            currentSeries.appendData(DataPoint(graphNextXValue, if(currentNow > 0) 0.0 else (abs(currentNow)/1000).toDouble()), graphNextXValue > timeLength, maxDataPoints)
+            currentSeries.appendData(DataPoint(graphNextXValue, if(currentNow >= 0) 0.0 else (abs(currentNow)/1000).toDouble()), graphNextXValue > timeLength, maxDataPoints)
             graphNextXValue++
 
             mHandler.postDelayed(this, mInterval.toLong())
