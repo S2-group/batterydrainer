@@ -34,7 +34,7 @@ object Utils {
                 BatteryManager.BATTERY_STATUS_DISCHARGING -> "Discharging"
                 BatteryManager.BATTERY_STATUS_CHARGING -> "Charging"
                 BatteryManager.BATTERY_STATUS_UNKNOWN -> "Unknown"
-                else -> "Unknown"
+                else -> "Unknown value"
             }
         }
 

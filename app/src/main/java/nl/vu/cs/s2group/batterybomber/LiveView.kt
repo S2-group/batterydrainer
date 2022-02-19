@@ -17,6 +17,7 @@ import androidx.fragment.app.Fragment
 import com.jjoe64.graphview.GraphView
 import com.jjoe64.graphview.series.DataPoint
 import com.jjoe64.graphview.series.LineGraphSeries
+import nl.vu.cs.s2group.batterybomber.Utils.Battery.getBatteryStatusText
 import timber.log.Timber
 import java.lang.StrictMath.abs
 import java.util.*
@@ -53,9 +54,10 @@ class LiveView : Fragment(R.layout.fragment_live_view) {
 
         override fun run() {
             var currentNow = batteryManager.getIntProperty(BatteryManager.BATTERY_PROPERTY_CURRENT_NOW) //Instantaneous battery current in microamperes
-            if(Build.MANUFACTURER.equals("Xiaomi", true)) {
-                if(Build.MODEL.equals("M2012K11AG", true))  //this model reports with inverted sign
-                    currentNow = -currentNow
+
+            val status = batteryManager.getIntProperty(BatteryManager.BATTERY_PROPERTY_STATUS)
+            if(status == BatteryManager.BATTERY_STATUS_DISCHARGING) {   //some models report with inverted sign
+                currentNow = -abs(currentNow)
             }
 
             val currentAverage = batteryManager.getIntProperty(BatteryManager.BATTERY_PROPERTY_CURRENT_AVERAGE) //Average battery current in microamperes
