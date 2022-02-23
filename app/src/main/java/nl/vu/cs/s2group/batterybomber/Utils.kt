@@ -3,8 +3,24 @@ package nl.vu.cs.s2group.batterybomber
 import android.content.Context
 import android.os.BatteryManager
 import android.util.TypedValue
+import android.view.View
+import android.view.ViewGroup
+import androidx.core.view.children
 
 object Utils {
+    fun View.getAllChildrenFlat(): List<View> {
+        val result = ArrayList<View>()
+
+        if (this !is ViewGroup) {
+            result.add(this)
+        } else {
+            for(child in this.children) {
+                result.addAll(child.getAllChildrenFlat())
+            }
+        }
+        return result
+    }
+
     fun spToPx(sp: Float, context: Context): Int {
         return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, sp, context.resources.displayMetrics).toInt()
     }

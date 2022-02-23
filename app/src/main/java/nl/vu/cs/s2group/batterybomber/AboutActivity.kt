@@ -1,6 +1,5 @@
 package nl.vu.cs.s2group.batterybomber
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.text.Html
 import android.text.method.LinkMovementMethod
@@ -11,10 +10,13 @@ import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
+import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import com.google.android.material.appbar.MaterialToolbar
 import mehdi.sakout.aboutpage.AboutPage
 import mehdi.sakout.aboutpage.Element
-import timber.log.Timber
+import nl.vu.cs.s2group.batterybomber.Utils.getAllChildrenFlat
+
 
 class AboutActivity : AppCompatActivity(R.layout.activity_about) {
     private lateinit var aboutPage: View
@@ -54,7 +56,7 @@ class AboutActivity : AppCompatActivity(R.layout.activity_about) {
                 "the Internet, data centers, telecommunication, and embedded devices will consume one third of the global energy demand. " +
                 "Renewable energy is only a half solution as to address the root causes we need green IT, "+
                 "to sustainably reduce the energy need of data centers and cloud services worldwide [1].<br/><br/>" +
-                """<a href='https://ieeexplore.ieee.org/abstract/document/9585139'>[1]</a> R. Verdecchia, P. Lago, C. Ebert and C. de Vries, "Green IT and Green Software," in IEEE Software, vol. 38, no. 6, pp. 7-15, Nov.-Dec. 2021, doi: 10.1109/MS.2021.3102254."""
+                """<a href='https://ieeexplore.ieee.org/abstract/document/9585139'>[1]</a> <span style="color:${"#" + Integer.toHexString(ContextCompat.getColor(this, mehdi.sakout.aboutpage.R.color.about_item_text_color) and 0x00ffffff)}">R. Verdecchia, P. Lago, C. Ebert and C. de Vries, "Green IT and Green Software," in IEEE Software, vol. 38, no. 6, pp. 7-15, Nov.-Dec. 2021, doi: 10.1109/MS.2021.3102254.</span>"""
                 , Html.FROM_HTML_MODE_COMPACT)
             )
             .addWebsite("https://s2group.cs.vu.nl", "s2group.cs.vu.nl")
@@ -66,6 +68,15 @@ class AboutActivity : AppCompatActivity(R.layout.activity_about) {
             .addWebsite("https://www.ivanomalavolta.com", "Ivano Malavolta")
             .create()
         aboutPage.layoutParams = LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT)
+
+        //Make the header "Project Contributions" black
+        aboutPage.findViewById<LinearLayout>(mehdi.sakout.aboutpage.R.id.about_providers)
+            .getAllChildrenFlat()
+            .find { view -> view is TextView && view.text.startsWith("Project Contributions") }
+            .apply { with(this as TextView) {
+                //TextViewCompat.setTextAppearance(this, mehdi.sakout.aboutpage.R.style.about_groupTextAppearance);
+                this.setTextColor(ContextCompat.getColor(context, R.color.defaultTextColor))
+        }}
 
         //align the text and set up the view so that the links are clickable
         val descriptionTextView = aboutPage.findViewById(mehdi.sakout.aboutpage.R.id.description) as TextView
