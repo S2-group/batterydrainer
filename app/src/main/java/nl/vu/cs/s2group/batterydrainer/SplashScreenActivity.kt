@@ -5,6 +5,7 @@ import android.content.Intent
 import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 
 @SuppressLint("CustomSplashScreen")
@@ -16,6 +17,7 @@ class SplashScreenActivity : AppCompatActivity() {
             installSplashScreen()
             super.onCreate(savedInstanceState)
         }
+        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
         Thread.sleep(500) //artificial delay before we switch from the splash screen
         startActivity(Intent(this@SplashScreenActivity, MainActivity::class.java))
         finish()

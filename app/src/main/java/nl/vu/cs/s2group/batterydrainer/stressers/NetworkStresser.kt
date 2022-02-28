@@ -73,11 +73,17 @@ class NetworkStresser(context: Context) : Stresser(context) {
                         impossibleUIUpdateOnMain(dataChunk[0].toInt() xor dataChunk[readsz-1].toInt() == 300)
                     }
                     inputStream.close()
-                } catch(ex: InterruptedIOException) {
+                } catch(ex: InterruptedIOException) {   //expected
+                    Timber.i(ex.message)
+                    break
+                } catch (ex: javax.net.ssl.SSLHandshakeException) {
+                    //may happen if the phone has wrong date/time or invalid certificate is presented
+                    Timber.w(ex)
                     break
                 } catch (ex: ProtocolException) {
                     //Can be thrown sometimes due to the large repetitive download. Simply re-download
-                    break
+                    Timber.w(ex)
+                    continue
                 }
                 con.disconnect()
             }
