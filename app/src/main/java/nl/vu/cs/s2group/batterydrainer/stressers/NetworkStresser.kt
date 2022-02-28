@@ -1,4 +1,4 @@
-package nl.vu.cs.s2group.batterybomber.stressers
+package nl.vu.cs.s2group.batterydrainer.stressers
 
 import android.app.ActivityManager
 import android.content.Context
@@ -8,16 +8,10 @@ import java.lang.StrictMath.min
 import java.net.HttpURLConnection
 import java.net.ProtocolException
 import java.net.URL
-import java.security.SecureRandom
-import java.security.cert.X509Certificate
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
-import javax.net.ssl.HostnameVerifier
 import javax.net.ssl.HttpsURLConnection
-import javax.net.ssl.SSLContext
-import javax.net.ssl.TrustManager
-import javax.net.ssl.X509TrustManager
 
 class NetworkStresser(context: Context) : Stresser(context) {
     private lateinit var networkExecutorService : ExecutorService

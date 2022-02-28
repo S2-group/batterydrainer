@@ -1,4 +1,4 @@
-package nl.vu.cs.s2group.batterybomber.stressers
+package nl.vu.cs.s2group.batterydrainer.stressers
 
 import android.Manifest
 import android.content.Context
@@ -7,8 +7,8 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.add
 import androidx.fragment.app.commit
-import nl.vu.cs.s2group.batterybomber.CameraFragment
-import nl.vu.cs.s2group.batterybomber.R
+import nl.vu.cs.s2group.batterydrainer.CameraFragment
+import nl.vu.cs.s2group.batterydrainer.R
 
 class CameraStresser(context: Context, private val fragmentManager: FragmentManager) : Stresser(context) {
 

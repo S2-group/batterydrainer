@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="nl.vu.cs.s2group.batterybomber">
+    package="nl.vu.cs.s2group.batterydrainer">
 
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.CAMERA" />
@@ -16,7 +16,7 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.BatteryBomber">
+        android:theme="@style/Theme.BatteryDrainer">
         <activity
             android:name=".SplashScreenActivity"
             android:screenOrientation="userPortrait"

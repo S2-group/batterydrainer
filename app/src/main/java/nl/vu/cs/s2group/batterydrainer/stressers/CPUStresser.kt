@@ -1,4 +1,4 @@
-package nl.vu.cs.s2group.batterybomber.stressers
+package nl.vu.cs.s2group.batterydrainer.stressers
 
 import android.content.Context
 import timber.log.Timber

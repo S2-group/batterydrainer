@@ -27,7 +27,7 @@
                     android:id="@+id/topToolBar"
                     android:layout_width="match_parent"
                     android:layout_height="?attr/actionBarSize"
-                    app:title="BatteryBomber"
+                    app:title="BatteryDrainer"
                     app:menu="@menu/main_menu"
                     style="@style/Widget.MaterialComponents.Toolbar.Primary" />
                     <!--            app:navigationIcon="@drawable/ic_baseline_menu_24"-->

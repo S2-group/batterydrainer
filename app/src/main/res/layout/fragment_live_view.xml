@@ -97,7 +97,7 @@
 
     </GridLayout>
 
-    <nl.vu.cs.s2group.batterybomber.HorizontalSeparator
+    <nl.vu.cs.s2group.batterydrainer.HorizontalSeparator
         style="@style/horizontal_separator"
         android:id="@+id/stats_separator"
         android:layout_marginStart="16dp"
@@ -118,7 +118,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/stats_separator" >
 
-        <nl.vu.cs.s2group.batterybomber.CustomGraphView
+        <nl.vu.cs.s2group.batterydrainer.CustomGraphView
             android:id="@+id/liveGraphWatts"
             android:layout_width="wrap_content"
             android:layout_height="200dip"
@@ -138,7 +138,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/liveGraphWattsContainer" >
 
-        <nl.vu.cs.s2group.batterybomber.CustomGraphView
+        <nl.vu.cs.s2group.batterydrainer.CustomGraphView
             android:id="@+id/liveGraphCurrent"
             android:layout_width="wrap_content"
             android:layout_height="200dip"

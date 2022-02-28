@@ -1,4 +1,4 @@
-package nl.vu.cs.s2group.batterybomber.stressers
+package nl.vu.cs.s2group.batterydrainer.stressers
 
 import android.Manifest
 import android.content.Context
@@ -9,7 +9,7 @@ import android.hardware.SensorEventListener
 import android.hardware.SensorManager
 import android.os.Build
 import androidx.core.content.ContextCompat
-import nl.vu.cs.s2group.batterybomber.*
+import nl.vu.cs.s2group.batterydrainer.*
 import timber.log.Timber
 
 class SensorsStresser(context: Context) : Stresser(context) {

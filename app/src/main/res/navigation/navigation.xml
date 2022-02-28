@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/liveView"
-        android:name="nl.vu.cs.s2group.batterybomber.LiveView"
+        android:name="nl.vu.cs.s2group.batterydrainer.LiveView"
         android:label="fragment_live_view"
         tools:layout="@layout/fragment_live_view" >
         <action
@@ -16,7 +16,7 @@
     </fragment>
     <fragment
         android:id="@+id/sourceView"
-        android:name="nl.vu.cs.s2group.batterybomber.SourceView"
+        android:name="nl.vu.cs.s2group.batterydrainer.SourceView"
         android:label="fragment_source_view"
         tools:layout="@layout/fragment_source_view" >
         <action
@@ -25,7 +25,7 @@
     </fragment>
     <activity
         android:id="@+id/aboutActivity"
-        android:name="nl.vu.cs.s2group.batterybomber.AboutActivity"
+        android:name="nl.vu.cs.s2group.batterydrainer.AboutActivity"
         android:label="activity_about"
         tools:layout="@layout/activity_about" />
 </navigation>

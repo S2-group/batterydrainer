@@ -69,7 +69,7 @@
 
         <!-- Initially invisible because as soon as this custom view gets visible, the GPU will
         start drawing millions of small rotating triangles -->
-        <nl.vu.cs.s2group.batterybomber.graphics.MyGLSurfaceView
+        <nl.vu.cs.s2group.batterydrainer.graphics.MyGLSurfaceView
             android:id="@+id/myGLSurfaceView"
             android:layout_gravity="center"
             android:layout_width="100dp"

@@ -1,4 +1,4 @@
-package nl.vu.cs.s2group.batterybomber.stressers
+package nl.vu.cs.s2group.batterydrainer.stressers
 
 import android.Manifest
 import android.content.Context
@@ -9,7 +9,7 @@ import android.os.Build
 import android.os.Bundle
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import nl.vu.cs.s2group.batterybomber.Utils
+import nl.vu.cs.s2group.batterydrainer.Utils
 import timber.log.Timber
 
 class LocationStresser(context: Context) : Stresser(context) {

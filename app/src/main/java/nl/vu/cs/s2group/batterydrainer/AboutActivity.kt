@@ -1,4 +1,4 @@
-package nl.vu.cs.s2group.batterybomber
+package nl.vu.cs.s2group.batterydrainer
 
 import android.os.Bundle
 import android.text.Html
@@ -15,7 +15,7 @@ import androidx.core.content.ContextCompat
 import com.google.android.material.appbar.MaterialToolbar
 import mehdi.sakout.aboutpage.AboutPage
 import mehdi.sakout.aboutpage.Element
-import nl.vu.cs.s2group.batterybomber.Utils.getAllChildrenFlat
+import nl.vu.cs.s2group.batterydrainer.Utils.getAllChildrenFlat
 
 
 class AboutActivity : AppCompatActivity(R.layout.activity_about) {
@@ -47,7 +47,7 @@ class AboutActivity : AppCompatActivity(R.layout.activity_about) {
             .isRTL(false)
             .setImage(R.drawable.ic_logo)
             .setDescription(Html.fromHtml("" +
-                "BatteryBomber is an android application aiming to drain the phone's battery as fast as possible. " +
+                "BatteryDrainer is an android application aiming to drain the phone's battery as fast as possible. " +
                 "The idea is that every individual hardware component in a phone consumes an amount of power " +
                 "in order to function and consumes maximum power under maximum utilization. " +
                 "With this application we demonstrate the need for energy-efficient software and sustainable software engineering " +

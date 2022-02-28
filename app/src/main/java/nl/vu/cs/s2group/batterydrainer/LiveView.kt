@@ -1,4 +1,4 @@
-package nl.vu.cs.s2group.batterybomber
+package nl.vu.cs.s2group.batterydrainer
 
 import android.content.BroadcastReceiver
 import android.content.Context
@@ -17,7 +17,7 @@ import androidx.fragment.app.Fragment
 import com.jjoe64.graphview.GraphView
 import com.jjoe64.graphview.series.DataPoint
 import com.jjoe64.graphview.series.LineGraphSeries
-import nl.vu.cs.s2group.batterybomber.Utils.Battery.getBatteryStatusText
+import nl.vu.cs.s2group.batterydrainer.Utils.Battery.getBatteryStatusText
 import timber.log.Timber
 import java.lang.StrictMath.abs
 import java.util.*

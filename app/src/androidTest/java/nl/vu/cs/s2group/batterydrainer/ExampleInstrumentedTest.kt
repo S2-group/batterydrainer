@@ -1,4 +1,4 @@
-package nl.vu.cs.s2group.batterybomber
+package nl.vu.cs.s2group.batterydrainer
 
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.ext.junit.runners.AndroidJUnit4

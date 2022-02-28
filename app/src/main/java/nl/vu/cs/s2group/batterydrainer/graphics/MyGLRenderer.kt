@@ -1,4 +1,4 @@
-package nl.vu.cs.s2group.batterybomber.graphics
+package nl.vu.cs.s2group.batterydrainer.graphics
 
 
 import javax.microedition.khronos.egl.EGLConfig

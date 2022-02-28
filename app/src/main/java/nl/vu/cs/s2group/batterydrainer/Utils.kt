@@ -1,4 +1,4 @@
-package nl.vu.cs.s2group.batterybomber
+package nl.vu.cs.s2group.batterydrainer
 
 import android.content.Context
 import android.os.BatteryManager

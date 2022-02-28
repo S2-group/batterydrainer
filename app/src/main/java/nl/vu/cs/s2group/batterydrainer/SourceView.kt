@@ -1,9 +1,7 @@
-package nl.vu.cs.s2group.batterybomber
+package nl.vu.cs.s2group.batterydrainer
 
 import android.Manifest
-import android.app.Activity
 import android.content.Context
-import android.content.Intent
 import android.content.IntentSender
 import android.location.LocationManager
 import android.os.Build
@@ -16,7 +14,7 @@ import com.google.android.gms.common.api.ResolvableApiException
 import com.google.android.gms.location.*
 import com.google.android.gms.tasks.Task
 import com.google.android.material.card.MaterialCardView
-import nl.vu.cs.s2group.batterybomber.stressers.*
+import nl.vu.cs.s2group.batterydrainer.stressers.*
 import timber.log.Timber
 import android.net.ConnectivityManager
 import androidx.activity.result.ActivityResultLauncher
