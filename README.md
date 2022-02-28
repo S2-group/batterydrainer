@@ -1,7 +1,7 @@
 
 # BatteryDrainer
 
-| ![screenshot splash screen](images/screenshot-splash.png) | ![screenshot choices](images/screenshot-choices.png) | ![screenshot running](images/screenshot-running.png) |
+| ![screenshot splash screen](images/screenshot-splash.jpg) | ![screenshot choices](images/screenshot-choices.jpg) | ![screenshot running](images/screenshot-running.jpg) |
 | ---------------------------------------------- | -------------------------------------------- | ------------------------------------------- |
 
 BatteryDrainer is an android application aiming to drain the phone's battery as fast as possible. The idea is that every individual hardware component in a phone consumes an amount of power in order to function and consumes maximum power under maximum utilization. With this application we demonstrate the need for energy-efficient software and sustainable software engineering practices in battery-powered devices.
