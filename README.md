@@ -1,5 +1,5 @@
 
-# BatteryDrainer &nbsp;<img src="images/logo512x512.png" alt="logo" height="25">
+# BatteryDrainer
 
 | ![screenshot choices](images/screenshot-choices.jpg) | ![screenshot running](images/screenshot-running.jpg) | ![screenshot splash screen](images/screenshot-splash.jpg) |
 | ---------------------------------------------- | -------------------------------------------- | ------------------------------------------- |
@@ -16,7 +16,7 @@ As of 2022, IT systems alone already consume 10% of global electricity and by 20
 
 [[1]](https://ieeexplore.ieee.org/abstract/document/9585139) R. Verdecchia, P. Lago, C. Ebert and C. de Vries, "Green IT and Green Software," in IEEE Software, vol. 38, no. 6, pp. 7-15, Nov.-Dec. 2021, doi: 10.1109/MS.2021.3102254.
 
-## Features
+## Features :wrench:
 
 Currently BatteryDrainer uses the following hardware features to drain the phone's batter:
 
