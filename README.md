@@ -29,7 +29,7 @@ Currently BatteryDrainer uses the following hardware features to drain the phone
 
 If you want to contribute, simply clone this repository, prototype your idea or bug fix, and finally create a pull request!
 
-If you would like to implement a future feature, make sure to checkout [roadmap.md](roadmap.md).
+If you would like to implement a future feature, make sure to checkout [ROADMAP.md](ROADMAP.md).
 
 ## Contact :raising_hand:
 
