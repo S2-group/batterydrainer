@@ -1,20 +1,18 @@
 
 # BatteryDrainer
 
-| ![screenshot choices](images/screenshot-choices.jpg) | ![screenshot running](images/screenshot-running.jpg) | ![screenshot splash screen](images/screenshot-splash.jpg) |
-| ---------------------------------------------- | -------------------------------------------- | ------------------------------------------- |
+BatteryDrainer is an android app aiming to drain the phone's battery as fast as possible. 
 
 <a href="https://play.google.com/store/apps/details?id=nl.vu.cs.s2group.batterydrainer"><img src="https://play.google.com/intl/en_us/badges/images/generic/en_badge_web_generic.png" alt="Download on Google Play" height="75"></a>
 
-## About :information_source:
-
-BatteryDrainer is an android app aiming to drain the phone's battery as fast as possible. ***But Why?***
-
-With this application we demonstrate the need for energy-efficient software and sustainable software engineering practices in battery-powered devices, like phones or tablets. 
+***Why?*** With this application we demonstrate the need for energy-efficient software and sustainable software engineering practices in battery-powered devices, like phones or tablets. 
 
 As of 2022, IT systems alone already consume 10% of global electricity and by 2030 it is estimated that, the Internet, data centers, telecommunication, and embedded devices will consume one third of the global energy demand. Renewable energy is only a half solution. To address the root causes we need green IT in order to sustainably reduce the energy need of data centers and cloud services worldwide [1].
 
 [[1]](https://ieeexplore.ieee.org/abstract/document/9585139) R. Verdecchia, P. Lago, C. Ebert and C. de Vries, "Green IT and Green Software," in IEEE Software, vol. 38, no. 6, pp. 7-15, Nov.-Dec. 2021, doi: 10.1109/MS.2021.3102254.
+
+| ![screenshot choices](images/screenshot-choices.jpg) | ![screenshot running](images/screenshot-running.jpg) | ![screenshot splash screen](images/screenshot-splash.jpg) |
+| ---------------------------------------------- | -------------------------------------------- | ------------------------------------------- |
 
 ## Features :wrench:
 
