@@ -103,6 +103,15 @@ class NetworkStresser(context: Context) : Stresser(context) {
                     break
                 } catch (ex: javax.net.ssl.SSLHandshakeException) {
                     //may happen if the phone has wrong date/time or invalid certificate is presented
+                    //may also happen if the user has WiFi connection, but they must sign-in into the network first (e.g. airport)
+                    Timber.w(ex)
+                    break
+                } catch(ex: java.net.ConnectException) {
+                    //TODO: notify user about failure while attempting to connect a socket to a remote address and port
+                    Timber.w(ex)
+                    break
+                } catch (ex: java.net.UnknownHostException) {
+                    //TODO: notify user about failure: IP address of host could not be determined
                     Timber.w(ex)
                     break
                 } catch (ex: ProtocolException) {
