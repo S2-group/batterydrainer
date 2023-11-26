@@ -39,6 +39,7 @@
     <string name="energy_sources">Energy Sources</string>
     <string name="live_view">Live View</string>
     <string name="cpu_stress_choice">CPU stress choice</string>
+    <string name="vibration">Vibration</string>
     <string name="location">Location</string>
     <string name="network">Network</string>
     <string name="sensors">Sensors</string>
