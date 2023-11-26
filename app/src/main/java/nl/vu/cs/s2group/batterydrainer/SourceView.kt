@@ -58,6 +58,7 @@ class SourceView : Fragment(R.layout.fragment_source_view) {
     private lateinit var sensorsStresser    : SensorsStresser
     private lateinit var networkStresser    : NetworkStresser
     private lateinit var locationStresser   : LocationStresser
+    private lateinit var vibrationStresser   : VibrationStresser
     private lateinit var stressersList      : ArrayList<Stresser>
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -69,6 +70,7 @@ class SourceView : Fragment(R.layout.fragment_source_view) {
         val sensorsCard  : MaterialCardView = view.findViewById(R.id.sensorsCard)
         val networkCard  : MaterialCardView = view.findViewById(R.id.networkCard)
         val locationCard : MaterialCardView = view.findViewById(R.id.locationCard)
+        val vibrationCard : MaterialCardView = view.findViewById(R.id.vibrationCard)
         val context = requireContext()
 
         cpuStresser         = CPUStresser     (context)
@@ -77,6 +79,7 @@ class SourceView : Fragment(R.layout.fragment_source_view) {
         sensorsStresser     = SensorsStresser (context)
         networkStresser     = NetworkStresser (context)
         locationStresser    = LocationStresser(context)
+        vibrationStresser    = VibrationStresser(context)
         stressersList       = arrayListOf(cpuStresser, gpuStresser, cameraStresser, sensorsStresser, networkStresser, locationStresser)
 
         fun stresserPermissionLauncher(isGranted: Boolean, permissionName: String, stresser: Stresser, cardView: MaterialCardView) {
@@ -188,6 +191,22 @@ class SourceView : Fragment(R.layout.fragment_source_view) {
             }
 
             stresserOnClick(locationStresser, locationCard)
+        }
+        vibrationCard.setOnClickListener {
+            vibrationCard.toggle()
+
+            if(vibrationCard.isChecked) {
+                if(!vibrationStresser.permissionsGranted()) {
+                    if(Build.VERSION.SDK_INT < Build.VERSION_CODES.S)
+                        (requestLocationLauncher as ActivityResultLauncher<String>).launch(Manifest.permission.VIBRATE) //First requests the location permission and then requests the high accuracy
+                    else
+                        (requestLocationLauncher as  ActivityResultLauncher<Array<String>>).launch(arrayOf(Manifest.permission.VIBRATE, Manifest.permission.VIBRATE))
+                    return@setOnClickListener
+                }
+                requestHighAccuracyLocation()
+            }
+
+            stresserOnClick(vibrationStresser, vibrationCard)
         }
     }
 
